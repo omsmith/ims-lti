@@ -23,3 +23,11 @@ describe 'Main', () ->
     it 'should be an instance of Consumer', () =>
       @lti.Consumer.should.be.an.instanceOf Object
       @lti.Consumer.should.equal require ('../lib/consumer')
+
+  describe '.supported_versions', () =>
+    it 'should not be empty', () =>
+      @lti.supported_versions.length.should.not.equal 0
+    it 'should include 1.0', () =>
+      @lti.supported_versions.should.include '1.0'
+    it 'should include 1.1', () =>
+      @lti.supported_versions.should.include '1.1'
