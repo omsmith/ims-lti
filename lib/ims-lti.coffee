@@ -16,6 +16,5 @@ exports = module.exports =
 
   # Which version of the LTI standard are accepted
   supported_versions: [
-    '1.0'
-    '1.1'
+    'LTI-1p0'
   ]

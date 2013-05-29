@@ -2,7 +2,7 @@ lti       = require '../'
 should    = require 'should'
 
 
-describe 'Main', () ->
+describe 'LTI', () ->
 
   before ()=>
     @lti = lti
@@ -28,6 +28,6 @@ describe 'Main', () ->
     it 'should not be empty', () =>
       @lti.supported_versions.length.should.not.equal 0
     it 'should include 1.0', () =>
-      @lti.supported_versions.should.include '1.0'
+      @lti.supported_versions.should.include 'LTI-1p0'
     it 'should include 1.1', () =>
-      @lti.supported_versions.should.include '1.1'
+      @lti.supported_versions.should.include 'LTI-1p0'
