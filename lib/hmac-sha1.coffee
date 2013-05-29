@@ -34,7 +34,7 @@ class HMAC_SHA1
 
     cipher = crypto.createHmac 'sha1', key
     hashed = cipher.update(raw).digest('base64')
-    hashed[0..hashed.length-2]
+    #hashed[0..hashed.length-2]  <- python oauth does this to remove '=' but i dont think we need to
 
 
 exports = module.exports = HMAC_SHA1

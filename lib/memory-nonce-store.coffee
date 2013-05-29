@@ -1,5 +1,6 @@
 NonceStore = require './nonce-store'
 
+# Five minutes
 EXPIRE_IN_SEC = 5*60
 
 class MemoryNonceStore extends NonceStore
