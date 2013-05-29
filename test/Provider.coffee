@@ -116,6 +116,7 @@ describe 'LTI.Provider', () ->
           resource_link_id: 'http://link-to-resource.com/resource'
           oauth_customer_key: 'key'
           oauth_signature_method: 'HMAC-SHA1'
+          oauth_timestamp: Math.round(Date.now()/1000)
           oauth_nonce: Date.now()
 
       #sign the fake request
@@ -135,6 +136,7 @@ describe 'LTI.Provider', () ->
           resource_link_id: 'http://link-to-resource.com/resource'
           oauth_customer_key: 'key'
           oauth_signature_method: 'HMAC-SHA1'
+          oauth_timestamp: Math.round(Date.now()/1000)
           oauth_nonce: Date.now()
 
       #sign the fake request
@@ -142,6 +144,8 @@ describe 'LTI.Provider', () ->
       req.body.oauth_signature = signature
 
       @provider.valid_request(req).should.equal true
+      # Stall for a moment
+      @provider.valid_request(req)
       @provider.valid_request(req).should.equal false
 
 
