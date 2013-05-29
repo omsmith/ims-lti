@@ -56,7 +56,7 @@ class Provider
 
 
 
-  parse_request: (req=@req) ->
+  parse_request: (req) ->
     @_body = {}
     for key, val in req.body
       continue if key.match(/oauth/)
