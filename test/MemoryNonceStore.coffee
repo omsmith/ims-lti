@@ -11,6 +11,10 @@ describe 'MemoryNonceStore', () ->
     it 'should exist', () =>
       should.exist(@store.isNew)
 
+    it 'should return true if nothing passed', () =>
+      store = new MemoryNonceStore('consumer_key')
+      store.isNew(undefined).should.be.ok
+
     it 'should return true for new nonces', () =>
       store = new MemoryNonceStore('consumer_key')
       store.isNew('1').should.be.ok

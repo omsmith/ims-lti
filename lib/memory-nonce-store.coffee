@@ -7,7 +7,10 @@ class MemoryNonceStore extends NonceStore
   constructor: (consumer_key) ->
     @used = []
 
-  isNew:   (nonce="not-set", timestamp)->
+  isNew:   (nonce, timestamp)->
+
+    return true if typeof nonce is 'undefined' or nonce is null
+
     notInArray = @used.indexOf(nonce) is -1
     @setUsed(nonce, timestamp)
 
