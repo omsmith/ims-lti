@@ -32,7 +32,7 @@ class Provider
   # Returns true/false if is valid
   #
   # Sets up request variables for easier access down the line
-  valid_request: (req, callback=()->) ->
+  valid_request: (req, callback=()->) =>
     @parse_request(req)
     if not @_valid_parameters(req)
       return callback(new Error('Invalid LTI parameters'), false)
@@ -52,7 +52,7 @@ class Provider
   # Helper to validate the OAuth information in the request
   #
   # Returns true/false if is valid OAuth signatue and nonce
-  _valid_oauth: (req, callback) =>
+  _valid_oauth: (req, callback) ->
     generated = @signer.build_signature req, @consumer_secret
     valid_signature = generated is req.body.oauth_signature
     return callback new Error('Invalid Signature'), false if not valid_signature
