@@ -1,4 +1,4 @@
-MOCHA_OPTS = --compilers coffee:coffee-script -t 8000
+MOCHA_OPTS = --compilers coffee:coffee-script
 REPORTER = spec
 
 check: test

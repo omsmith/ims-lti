@@ -33,10 +33,10 @@ class Provider
   #
   # Sets up request variables for easier access down the line
   valid_request: (req, callback=()->) ->
-    @req = req if not @req
     @parse_request(req)
-    return callback new Error('Invalid LTI parameters'), false if not _valid_parameters(req)
-    @_valid_oauth req, (err, valid) => callback err, valid
+    if not @_valid_parameters(req)
+      return callback(new Error('Invalid LTI parameters'), false)
+    @_valid_oauth req, (err, valid) -> callback err, valid
 
 
   # Helper to validate basic LTI parameters

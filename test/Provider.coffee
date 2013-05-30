@@ -70,8 +70,9 @@ describe 'LTI.Provider', () ->
           lti_version: 'LTI-1p0'
           resource_link_id: 'http://link-to-resource.com/resource'
       @provider.valid_request req_missing_type, (err, valid) ->
-        err.should.be.an Error
+        err.should.not.equal null
         valid.should.equal false
+        done()
 
     it 'should return false if incorrect LTI version', (done) =>
       req_wrong_version =
@@ -80,8 +81,9 @@ describe 'LTI.Provider', () ->
           lti_version: 'LTI-0p0'
           resource_link_id: 'http://link-to-resource.com/resource'
       @provider.valid_request req_wrong_version, (err, valid) ->
-        err.should.be.an Error
+        err.should.not.equal null
         valid.should.equal false
+        done()
 
 
     it 'should return false if no resource_link_id', (done) =>
@@ -90,8 +92,9 @@ describe 'LTI.Provider', () ->
           lti_message_type: 'basic-lti-launch-request'
           lti_version: 'LTI-1p0'
       @provider.valid_request req_no_resource_link, (err, valid) ->
-        err.should.be.an Error
+        err.should.not.equal null
         valid.should.equal false
+        done()
 
     it 'should return false if bad oauth', (done) =>
       req =
@@ -112,8 +115,9 @@ describe 'LTI.Provider', () ->
       req.body.oauth_signature += "garbage"
 
       @provider.valid_request req, (err, valid) ->
-        err.should.be.an Error
+        err.should.not.equal null
         valid.should.equal false
+        done()
 
 
 
@@ -135,11 +139,12 @@ describe 'LTI.Provider', () ->
       req.body.oauth_signature = signature
 
       @provider.valid_request req, (err, valid) ->
-        err.should.equal null
+        should.not.exist err
         valid.should.equal true
+        done()
 
 
-    it 'should return false if nonce already seen', () =>
+    it 'should return false if nonce already seen', (done) =>
       req =
         path: '/test'
         route: {method: 'POST'}
@@ -156,10 +161,13 @@ describe 'LTI.Provider', () ->
       signature = @provider.signer.build_signature(req, 'secret')
       req.body.oauth_signature = signature
 
-      @provider.valid_request(req).should.equal true
-      # Stall for a moment
-      @provider.valid_request(req)
-      @provider.valid_request(req).should.equal false
+      @provider.valid_request req, (err, valid) =>
+        should.not.exist err
+        valid.should.equal true
+        @provider.valid_request req, (err, valid) ->
+          should.exist err
+          valid.should.equal false
+          done()
 
 
 
