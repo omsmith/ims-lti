@@ -8,25 +8,33 @@ class MemoryNonceStore extends NonceStore
   constructor: (consumer_key) ->
     @used = []
 
-  isNew:   (nonce, timestamp)->
+  isNew: (nonce, timestamp, next=()->)->
 
-    return false if typeof nonce is 'undefined' or nonce is null
+    if typeof nonce is 'undefined' or nonce is null or typeof nonce is 'function' or typeof timestamp is 'function' or typeof timestamp is 'undefined'
+      return next new Error('Invalid parameters'), false
 
-    notInArray = @used.indexOf(nonce) is -1
-    @setUsed(nonce, timestamp)
+    firstTimeSeen = @used.indexOf(nonce) is -1
 
-    if typeof timestamp isnt 'undefined' and timestamp isnt null
-      # Generate unix time in seconds
-      currentTime = Math.round(Date.now()/1000)
-      # Make sure this request is fresh (within the grace period)
-      timestampIsFresh = (currentTime - parseInt(timestamp,10)) <= EXPIRE_IN_SEC
-    else
-      timestampIsFresh = true
+    if not firstTimeSeen
+      return next new Error('Nonce already seen'), false
 
-    return notInArray and timestampIsFresh
+    @setUsed nonce, timestamp, (err) ->
+      if typeof timestamp isnt 'undefined' and timestamp isnt null
+        # Generate unix time in seconds
+        currentTime = Math.round(Date.now()/1000)
+        # Make sure this request is fresh (within the grace period)
+        timestampIsFresh = (currentTime - parseInt(timestamp,10)) <= EXPIRE_IN_SEC
 
-  setUsed: (nonce, timestamp)->
+        if timestampIsFresh
+          next null, true
+        else
+          next new Error('Expired timestamp'), false
+      else
+        next new Error('Timestamp required'), false
+
+  setUsed: (nonce, timestamp, next=()->)->
     @used.push(nonce)
+    next(null)
 
 
 exports = module.exports = MemoryNonceStore

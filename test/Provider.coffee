@@ -63,28 +63,37 @@ describe 'LTI.Provider', () ->
       @provider = new @lti.Provider('key','secret')
       @signer = @provider.signature_method
 
-    it 'should return false if bad headers', () =>
+    it 'should return false if missing lti_message_type', (done) =>
       req_missing_type =
         body:
           lti_message_type: ''
           lti_version: 'LTI-1p0'
           resource_link_id: 'http://link-to-resource.com/resource'
-      @provider.valid_request(req_missing_type).should.equal false
+      @provider.valid_request req_missing_type, (err, valid) ->
+        err.should.be.an Error
+        valid.should.equal false
 
+    it 'should return false if incorrect LTI version', (done) =>
       req_wrong_version =
         body:
           lti_message_type: 'basic-lti-launch-request'
           lti_version: 'LTI-0p0'
           resource_link_id: 'http://link-to-resource.com/resource'
-      @provider.valid_request(req_wrong_version).should.equal false
+      @provider.valid_request req_wrong_version, (err, valid) ->
+        err.should.be.an Error
+        valid.should.equal false
 
+
+    it 'should return false if no resource_link_id', (done) =>
       req_no_resource_link =
         body:
           lti_message_type: 'basic-lti-launch-request'
           lti_version: 'LTI-1p0'
-      @provider.valid_request(req_no_resource_link).should.equal false
+      @provider.valid_request req_no_resource_link, (err, valid) ->
+        err.should.be.an Error
+        valid.should.equal false
 
-    it 'should return false if bad oauth', () =>
+    it 'should return false if bad oauth', (done) =>
       req =
         path: '/test'
         route: {method: 'POST'}
@@ -102,11 +111,13 @@ describe 'LTI.Provider', () ->
       # Break the signature
       req.body.oauth_signature += "garbage"
 
-      @provider.valid_request(req).should.equal false
+      @provider.valid_request req, (err, valid) ->
+        err.should.be.an Error
+        valid.should.equal false
 
 
 
-    it 'should return true if good headers and oauth', () =>
+    it 'should return true if good headers and oauth', (done) =>
       req =
         path: '/test'
         route: {method: 'POST'}
@@ -123,7 +134,9 @@ describe 'LTI.Provider', () ->
       signature = @provider.signer.build_signature(req, 'secret')
       req.body.oauth_signature = signature
 
-      @provider.valid_request(req).should.equal true
+      @provider.valid_request req, (err, valid) ->
+        err.should.equal null
+        valid.should.equal true
 
 
     it 'should return false if nonce already seen', () =>
@@ -147,6 +160,8 @@ describe 'LTI.Provider', () ->
       # Stall for a moment
       @provider.valid_request(req)
       @provider.valid_request(req).should.equal false
+
+
 
 
 
