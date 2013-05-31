@@ -67,13 +67,42 @@ class Provider
   #  Strips 'oauth_' parameters for saftey
   #
   # Does not return anything
-  parse_request: (req) ->
+  parse_request: (req) =>
     for key, val of req.body
-      continue if key.match(/$oauth_/)
+      continue if key.match(/^oauth_/)
       @body[key] = val
 
+    @body.roles = [@body.roles] if typeof @body.roles is 'string'
+
+    @student = @has_role('learner') or @has_role('student')
+    @instructor = @has_role('instructor') or @has_role('faculty') or @has_role('staff')
+    @content_developer = @has_role('ContentDeveloper')
+    @member = @has_role('Member')
+    @manager = @has_role('Manager')
+    @mentor = @has_role('Mentor')
+    @admin = @has_role('administrator')
+    @ta = @has_role('TeachingAssistant')
+
+    @launch_request = @body.lti_message_type is 'basic-lti-launch-request'
+
+    @outcome_service = !!(@body.lis_outcome_service_url and @body.lis_result_sourcedid)
+
+    # user
+    @username = @body.lis_person_name_given or @body.lis_person_name_family or @body.lis_person_name_full or ''
+    @userId   = @body.user_id
+
+    # Context information
+    @context_id     = @body.context_id
+    @context_label  = @body.context_label
+    @context_title  = @body.context_title
 
 
+  # has_role Helper
+  #
+  #
+  has_role: (role) ->
+    role = role.toLowerCase()
+    @body.roles && @body.roles.filter((r) -> r.toLowerCase() is role).length >= 1
 
 
 

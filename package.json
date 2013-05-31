@@ -1,6 +1,6 @@
 {
   "name": "ims-lti",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "A test showing the possibility of pulling transcripts from Banner interface.",
   "author": {
     "name": "James Rundquist",
