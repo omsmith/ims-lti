@@ -3,9 +3,24 @@ crypto    = require('crypto')
 
 
 
+# Special encode is our encoding method that implements
+#  the encoding of characters not defaulted by encodeURI
+#
+#  Specifically ' and !
+#
+# Returns the encoded string
 special_encode = (string) ->
   encodeURIComponent(string).replace(/'/g,"%27").replace(/\!/g, "%21")
 
+
+# Cleaning invloves:
+#   stripping the oauth_signature from the params
+#   encoding the values ( yes this double encodes them )
+#   sorting the key/value pairs
+#   joining them with &
+#   encoding them again
+#
+# Returns a string representing the request
 _clean_request_body = (body) ->
   out = []
   return body if typeof body isnt 'object'
