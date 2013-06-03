@@ -23,23 +23,23 @@ describe 'LTI.Provider', () ->
 
 
 
-    it 'should accept (consumer_key, consumer_secret, sig)', () =>
+    it 'should accept (consumer_key, consumer_secret, nonceStore, sig)', () =>
       sig =
         me: 3
         you: 1
         total: 4
 
-      provider = new @lti.Provider('10204','secret-shhh',sig)
+      provider = new @lti.Provider('10204','secret-shhh', undefined, sig)
       provider.signer.should.equal sig
 
 
-    it 'should accept (consumer_key, consumer_secret, sig, nonceStore)', () =>
+    it 'should accept (consumer_key, consumer_secret, nonceStore, sig)', () =>
       nonceStore =
         isNonceStore: ()->true
         isNew:   ()->return
         setUsed: ()->return
 
-      provider = new @lti.Provider('10204','secret-shhh',{}, nonceStore)
+      provider = new @lti.Provider('10204','secret-shhh',nonceStore)
       provider.nonceStore.should.equal nonceStore
 
 
