@@ -2,10 +2,14 @@ should            = require 'should'
 
   # Standard nonce tests
   #
-exports.shouldBehaveLikeNonce = (newStore) =>
+exports.shouldBehaveLikeNonce = (newStore=()->) =>
 
   before ()=>
     @store = newStore()
+
+  after () =>
+    if @store.client
+      @store.client.flushdb()
 
 
 
@@ -37,11 +41,14 @@ exports.shouldBehaveLikeNonce = (newStore) =>
     it 'should return true for new nonces', (done) =>
       store = newStore()
       now = Math.round(Date.now()/1000)
-      store.isNew 'first-nonce', now, (err, valid)->
+
+      nonce_one = 'true-for-new-1-'+Math.random()*1000
+      nonce_two = 'true-for-new-2-'+Math.random()*1000
+      store.isNew nonce_one, now, (err, valid)->
         should.not.exist err
         valid.should.equal true
 
-        store.isNew 'second-nonce', now+1, (err, valid) ->
+        store.isNew nonce_two, now+1, (err, valid) ->
           should.not.exist err
           valid.should.equal true
           done()
@@ -49,13 +56,16 @@ exports.shouldBehaveLikeNonce = (newStore) =>
     it 'should return false for used nonces', (done) =>
       store = newStore()
       now = Math.round(Date.now()/1000)
-      store.isNew 'first-nonce', now, (err, valid)->
+
+      nonce = 'should-return-false-for-used-'+Math.random()*1000
+
+      store.isNew nonce, now, (err, valid)->
         should.not.exist err
         valid.should.equal true
 
-        store.isNew 'second-nonce', now+1, (err, valid) ->
-          should.not.exist err
-          valid.should.equal true
+        store.isNew nonce, now+1, (err, valid) ->
+          should.exist err
+          valid.should.equal false
           done()
 
 
@@ -68,22 +78,22 @@ exports.shouldBehaveLikeNonce = (newStore) =>
       past_two_minutes = now - 2*60
 
       first_test = () ->
-        store.isNew '00', now, (err, valid) ->
+        store.isNew 'tr-00', now, (err, valid) ->
           should.not.exist err
           valid.should.equal true
           second_test()
       second_test = () ->
-        store.isNew '11', future, (err, valid) ->
+        store.isNew 'tr-11', future, (err, valid) ->
           should.not.exist err
           valid.should.equal true
           third_test()
       third_test = () ->
-        store.isNew '01', past_minute, (err, valid) ->
+        store.isNew 'tr-01', past_minute, (err, valid) ->
           should.not.exist err
           valid.should.equal true
           fourth_test()
       fourth_test = () ->
-        store.isNew '02', past_two_minutes, (err, valid) ->
+        store.isNew 'tr-02', past_two_minutes, (err, valid) ->
           should.not.exist err
           valid.should.equal true
           done()

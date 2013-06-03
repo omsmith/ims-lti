@@ -26,7 +26,7 @@ class RedisNonceStore extends NonceStore
       return next new Error('Expired timestamp'), false
 
     # Pass all the parameter checks, now check to see if used
-    client.get nonce, (err, seen) ->
+    @redis.get nonce, (err, seen) =>
       if seen
         return next new Error('Nonce already seen'), false
       # Dont have to wait for callback b/c it's a sync op
