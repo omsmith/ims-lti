@@ -17,6 +17,7 @@
     "express": "3.0.5",
     "mocha": "1.10.0",
     "request": "2.21.0",
+    "redis": "0.8.3",
     "should": "1.2.2"
   },
   "directories": {

@@ -1,4 +1,4 @@
-MOCHA_OPTS = --compilers coffee:coffee-script
+MOCHA_OPTS = --compilers coffee:coffee-script --check-leaks
 REPORTER = spec
 
 check: test
