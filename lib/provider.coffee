@@ -8,7 +8,7 @@ class Provider
   # Used as accessor to request parameters
   body: {}
 
-  constructor: (consumer_key, consumer_secret, signature_method=(new HMAC_SHA1()), nonceStore ) ->
+  constructor: (consumer_key, consumer_secret, nonceStore, signature_method=(new HMAC_SHA1()) ) ->
 
     if typeof consumer_key is 'undefined' or consumer_key is null
       throw new Error 'Must specify consumer_key'
