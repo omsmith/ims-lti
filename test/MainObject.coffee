@@ -24,10 +24,8 @@ describe 'LTI', () ->
       @lti.Consumer.should.be.an.instanceOf Object
       @lti.Consumer.should.equal require ('../lib/consumer')
 
-  describe '.supported_versions', () =>
+  describe '.Stores', () =>
     it 'should not be empty', () =>
-      @lti.supported_versions.length.should.not.equal 0
-    it 'should include 1.0', () =>
-      @lti.supported_versions.should.include 'LTI-1p0'
-    it 'should include 1.1', () =>
-      @lti.supported_versions.should.include 'LTI-1p0'
+      should.exist(@lti.Stores)
+    it 'should include NonceStore', () =>
+      should.exist(@lti.Stores.NonceStore)

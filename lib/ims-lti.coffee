@@ -14,6 +14,11 @@ exports = module.exports =
   Provider: require './provider'
   Consumer: require './consumer'
 
+  Stores:
+    RedisStore:   require './redis-nonce-store'
+    MemoryStore:  require './redis-nonce-store'
+    NonceStore:   require './nonce-store'
+
   # Which version of the LTI standard are accepted
   supported_versions: [
     'LTI-1p0'
