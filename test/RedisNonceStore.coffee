@@ -8,5 +8,5 @@ client = require('redis').createClient()
 
 describe 'RedisNonceStore', () ->
 
-  shared.shouldBehaveLikeNonce () ->
+  shared.shouldBehaveLikeNonce () =>
     new RedisNonceStore('consumer_key', client)

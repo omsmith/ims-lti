@@ -4,5 +4,5 @@ shared            = require './shared'
 
 describe 'MemoryNonceStore', () ->
 
-  shared.shouldBehaveLikeNonce () ->
+  shared.shouldBehaveLikeNonce () =>
     new MemoryNonceStore('consumer_key')
