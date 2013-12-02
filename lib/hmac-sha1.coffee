@@ -10,7 +10,7 @@ crypto    = require('crypto')
 #
 # Returns the encoded string
 special_encode = (string) ->
-  encodeURIComponent(string).replace(/'/g,"%27").replace(/\!/g, "%21")
+  encodeURIComponent(string).replace(/[!'()]/g, escape).replace(/\*/g, "%2A")
 
 
 # Cleaning invloves:
