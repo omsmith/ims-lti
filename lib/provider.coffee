@@ -102,7 +102,8 @@ class Provider
   #
   has_role: (role) ->
     role = role.toLowerCase()
-    @body.roles && @body.roles.filter((r) -> r.toLowerCase() is role).length >= 1
+    regex = new RegExp("^urn:lti:role:ims/lis/" + role + "$")
+    @body.roles && @body.roles.filter((r) -> (r = r.toLowerCase()) and (r is role or regex.test(r))).length >= 1
 
 
 
