@@ -282,7 +282,13 @@ describe 'LTI.Provider', () ->
     it 'should have response outcome_service boolean', () =>
       @provider.outcome_service.should.equal true
 
+    it 'should account for the standardized urn prefix', () =>
+      provider = new @lti.Provider('key', 'secret')
+      provider.parse_request
+        body:
+          roles: 'urn:lti:role:ims/lis/Instructor'
 
+      provider.instructor.should.equal true
 
 
 
