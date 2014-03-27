@@ -42,7 +42,7 @@ class HMAC_SHA1
     hitUrl = req.protocol + "://" + req.get('host') + req.url
 
     sig = [
-      req.route.method.toUpperCase()
+      req.method.toUpperCase()
       special_encode hitUrl
       _clean_request_body req.body
     ]
