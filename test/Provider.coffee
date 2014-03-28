@@ -99,7 +99,7 @@ describe 'LTI.Provider', () ->
     it 'should return false if bad oauth', (done) =>
       req =
         path: '/test'
-        route: {method: 'POST'}
+        method: 'POST'
         body:
           lti_message_type: 'basic-lti-launch-request'
           lti_version: 'LTI-1p0'
@@ -127,7 +127,7 @@ describe 'LTI.Provider', () ->
     it 'should return true if good headers and oauth', (done) =>
       req =
         path: '/test'
-        route: {method: 'POST'}
+        method: 'POST'
         body:
           lti_message_type: 'basic-lti-launch-request'
           lti_version: 'LTI-1p0'
@@ -151,7 +151,7 @@ describe 'LTI.Provider', () ->
     it 'should return false if nonce already seen', (done) =>
       req =
         path: '/test'
-        route: {method: 'POST'}
+        method: 'POST'
         body:
           lti_message_type: 'basic-lti-launch-request'
           lti_version: 'LTI-1p0'
@@ -183,7 +183,7 @@ describe 'LTI.Provider', () ->
 
       req =
         path: '/test'
-        route: {method: 'POST'}
+        method: 'POST'
         body:
           context_id: "4"
           context_label: "PHYS 2112"
