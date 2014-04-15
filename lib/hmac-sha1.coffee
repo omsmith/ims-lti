@@ -1,4 +1,5 @@
 crypto    = require('crypto')
+inspect = (require 'util').inspect
 
 
 
@@ -25,7 +26,7 @@ _clean_request_body = (body) ->
   return body if typeof body isnt 'object'
   for key, val of body
     continue if key is 'oauth_signature'
-    out.push '#{key}=#{special_encode(val)}'
+    out.push "#{key}=#{special_encode(val)}"
 
   special_encode out.sort().join('&')
 
