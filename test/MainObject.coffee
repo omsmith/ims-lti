@@ -29,3 +29,4 @@ describe 'LTI', () ->
       should.exist(@lti.Stores)
     it 'should include NonceStore', () =>
       should.exist(@lti.Stores.NonceStore)
+

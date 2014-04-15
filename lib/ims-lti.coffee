@@ -1,8 +1,3 @@
-fs          = require 'fs'
-https       = require 'https'
-urlUtil     = require 'url'
-querystring = require 'querystring'
-
 # Export the main object
 exports = module.exports =
 

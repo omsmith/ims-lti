@@ -298,3 +298,4 @@ describe 'LTI.Provider', () ->
 
       provider.instructor.should.equal true
       provider.admin.should.equal true
+

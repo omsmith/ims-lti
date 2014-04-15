@@ -1,7 +1,8 @@
 should            = require 'should'
 
-  # Standard nonce tests
-  #
+
+# Standard nonce tests
+#
 exports.shouldBehaveLikeNonce = (newStore=()->) =>
 
   before ()=>
@@ -132,3 +133,4 @@ exports.shouldBehaveLikeNonce = (newStore=()->) =>
           should.exist err
           valid.should.equal false
           done()
+

@@ -1,7 +1,7 @@
 NonceStore = require './nonce-store'
 
 # Five minutes
-EXPIRE_IN_SEC = 5*60
+EXPIRE_IN_SEC = 5 * 60
 
 class MemoryNonceStore extends NonceStore
 
@@ -20,10 +20,10 @@ class MemoryNonceStore extends NonceStore
 
     @setUsed nonce, timestamp, (err) ->
       if typeof timestamp isnt 'undefined' and timestamp isnt null
-        # Generate unix time in seconds
-        currentTime = Math.round(Date.now()/1000)
-        # Make sure this request is fresh (within the grace period)
-        timestampIsFresh = (currentTime - parseInt(timestamp,10)) <= EXPIRE_IN_SEC
+        timestamp = parseInt timestamp, 10
+        currentTime = Math.round(Date.now() / 1000)
+
+        timestampIsFresh = (currentTime - timestamp) <= EXPIRE_IN_SEC
 
         if timestampIsFresh
           next null, true

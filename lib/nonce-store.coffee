@@ -2,7 +2,7 @@ class NonceStore
 
   isNonceStore: () -> true
 
-  isNew:   ()=>
+  isNew: ()=>
     for i, arg of arguments
       return arg new Error("NOT IMPLEMENTED"), false if typeof arg is 'function'
 

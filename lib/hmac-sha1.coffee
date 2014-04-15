@@ -1,4 +1,3 @@
-stringify = require('querystring').stringify
 crypto    = require('crypto')
 
 
@@ -10,7 +9,7 @@ crypto    = require('crypto')
 #
 # Returns the encoded string
 special_encode = (string) ->
-  encodeURIComponent(string).replace(/[!'()]/g, escape).replace(/\*/g, "%2A")
+  encodeURIComponent(string).replace(/[!'()]/g, escape).replace(/\*/g, '%2A')
 
 
 # Cleaning invloves:
@@ -26,7 +25,7 @@ _clean_request_body = (body) ->
   return body if typeof body isnt 'object'
   for key, val of body
     continue if key is 'oauth_signature'
-    out.push "#{key}=#{special_encode(val)}"
+    out.push '#{key}=#{special_encode(val)}'
 
   special_encode out.sort().join('&')
 
@@ -39,7 +38,7 @@ class HMAC_SHA1
 
   build_signature_base_string: (req, consumer_secret, token) ->
 
-    hitUrl = req.protocol + "://" + req.get('host') + req.url
+    hitUrl = req.protocol + '://' + req.get('host') + req.url
 
     sig = [
       req.method.toUpperCase()
@@ -58,7 +57,6 @@ class HMAC_SHA1
 
     cipher = crypto.createHmac 'sha1', key
     hashed = cipher.update(raw).digest('base64')
-    #hashed[0..hashed.length-2]  <- python oauth does this to remove '=' but i dont think we need to
 
 
 exports = module.exports = HMAC_SHA1

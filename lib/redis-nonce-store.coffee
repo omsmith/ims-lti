@@ -35,7 +35,7 @@ class RedisNonceStore extends NonceStore
 
 
   setUsed: (nonce, timestamp, next=()->)->
-    @redis.set(nonce, timestamp);
+    @redis.set(nonce, timestamp)
     @redis.expire(nonce, EXPIRE_IN_SEC)
     next(null)
 
