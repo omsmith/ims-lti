@@ -102,7 +102,7 @@ class Provider
   #
   has_role: (role) ->
     role = role.replace /([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1'
-    regex = new RegExp "(^|^urn:lti:role:ims/lis/)#{role}$", 'i'
+    regex = new RegExp "^(urn:lti:role:ims/lis/)?#{role}$", 'i'
     @body.roles && @body.roles.some (r) -> regex.test(r)
 
 
