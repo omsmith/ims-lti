@@ -1,14 +1,14 @@
 {
   "name": "ims-lti",
-  "version": "0.1.0",
-  "description": "A test showing the possibility of pulling transcripts from Banner interface.",
+  "version": "0.1.1",
+  "description": "Module for building an LTI Tool Provider and accept LTI launch requests",
   "author": {
     "name": "James Rundquist",
     "email": "james@courseshark.com"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/OfficeHours/ims-lti.git"
+    "url": "https://github.com/omsmith/ims-lti.git"
   },
   "dependencies": {
     "coffee-script": "1.6.2"
@@ -26,7 +26,7 @@
   "main": "./lib/index"
   ,
   "bugs": {
-    "url": "http://github.com/OfficeHours/ims-lti/issues"
+    "url": "http://github.com/omsmith/ims-lti/issues"
   },
   "readmeFilename": "README.md"
 }
