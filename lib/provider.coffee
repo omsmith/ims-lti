@@ -101,9 +101,9 @@ class Provider
   #
   #
   has_role: (role) ->
-    role = role.toLowerCase()
-    regex = new RegExp("^urn:lti:role:ims/lis/" + role + "$")
-    @body.roles && @body.roles.filter((r) -> (r = r.toLowerCase()) and (r is role or regex.test(r))).length >= 1
+    role = role.replace /([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1'
+    regex = new RegExp "(^|^urn:lti:role:ims/lis/)#{role}$", 'i'
+    @body.roles && @body.roles.some (r) -> regex.test(r)
 
 
 
