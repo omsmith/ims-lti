@@ -72,7 +72,7 @@ class Provider
       continue if key.match(/^oauth_/)
       @body[key] = val
 
-    @body.roles = [@body.roles] if typeof @body.roles is 'string'
+    @body.roles = @body.roles.split ',' if typeof @body.roles is 'string'
 
     @student = @has_role('learner') or @has_role('student')
     @instructor = @has_role('instructor') or @has_role('faculty') or @has_role('staff')

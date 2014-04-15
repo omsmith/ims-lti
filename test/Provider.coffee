@@ -290,7 +290,11 @@ describe 'LTI.Provider', () ->
 
       provider.instructor.should.equal true
 
+    it 'should test for multiple roles being passed into the body', () =>
+      provider = new @lti.Provider('key', 'secret')
+      provider.parse_request
+        body:
+          roles: 'Instructor,Administrator'
 
-
-
-
+      provider.instructor.should.equal true
+      provider.admin.should.equal true
