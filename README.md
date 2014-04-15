@@ -5,7 +5,7 @@ This is a nodejs library used to help create Tool Providers for the
 
 ## Install
 ```
-npm install git+ssh://git@github.com:OfficeHours/ims-lti.git
+npm install ims-lti --save
 ```
 
 To require the library into your project
