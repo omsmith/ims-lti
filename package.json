@@ -10,21 +10,18 @@
     "type": "git",
     "url": "https://github.com/omsmith/ims-lti.git"
   },
-  "dependencies": {
-    "coffee-script": "1.6.2"
-  },
   "devDependencies": {
     "express": "3.0.5",
     "mocha": "1.10.0",
     "request": "2.21.0",
     "redis": "0.8.3",
-    "should": "1.2.2"
+    "should": "1.2.2",
+    "coffee-script": "~1.7.1"
   },
   "directories": {
     "lib": "./lib/"
   },
-  "main": "./lib/index"
-  ,
+  "main": "./lib/ims-lti",
   "bugs": {
     "url": "http://github.com/omsmith/ims-lti/issues"
   },
