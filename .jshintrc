@@ -1,8 +1,0 @@
-{
-	"node": true,
-	"strict": true,
-	"trailing": true,
-	"undef": true,
-	"unused": true,
-	"laxbreak": true
-}
