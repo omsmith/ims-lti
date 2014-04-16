@@ -1,5 +1,7 @@
 # ims-lti
 
+[![Build Status](https://travis-ci.org/omsmith/ims-lti.svg?branch=master)](https://travis-ci.org/omsmith/ims-lti)
+
 This is a nodejs library used to help create Tool Providers for the
 [IMS LTI standard](http://www.imsglobal.org/lti/index.html). Tool Consumer implmentation is left as an excersise to the reader :P
 
