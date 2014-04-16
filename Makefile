@@ -17,7 +17,7 @@ test-unit:
 			$(MOCHA_OPTS)
 
 build: clean
-	./node_modules/.bin/coffee ./src/ims-lti.coffee ./lib
+	./node_modules/.bin/coffee -o ./lib -c ./src
 
 cover: clean
 	./node_modules/.bin/coffeeCoverage ./src ./lib
