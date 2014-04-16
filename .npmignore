@@ -1,7 +1,7 @@
 .gitignore
 .npmignore
 .jshintrc
-coffeelist.json
+coffeelint.json
 
 Makefile
 src

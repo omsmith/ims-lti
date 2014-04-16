@@ -10,6 +10,10 @@
     "type": "git",
     "url": "https://github.com/omsmith/ims-lti.git"
   },
+  "bugs": {
+    "url": "http://github.com/omsmith/ims-lti/issues"
+  },
+  "main": "./lib/ims-lti",
   "devDependencies": {
     "redis": "0.8.3",
     "should": "1.2.2",
@@ -19,13 +23,5 @@
     "mocha-lcov-reporter": "0.0.1",
     "mocha-multi": "~0.4.0",
     "coveralls": "~2.10.0"
-  },
-  "directories": {
-    "lib": "./lib/"
-  },
-  "main": "./lib/ims-lti",
-  "bugs": {
-    "url": "http://github.com/omsmith/ims-lti/issues"
-  },
-  "readmeFilename": "README.md"
+  }
 }
