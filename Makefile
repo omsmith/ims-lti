@@ -23,7 +23,7 @@ cover: clean
 	./node_modules/.bin/coffeeCoverage ./src ./lib
 
 report-cov:
-	cat ./coverage/lcov.info | ./node_modules/.bin/coveralls
+	cat ./coverage/lcov.info | ./node_modules/.bin/coveralls ./src
 
 clean:
 	rm -rf ./lib ./coverage; exit 0
