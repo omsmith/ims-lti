@@ -71,7 +71,7 @@ class HMAC_SHA1
     [key, raw]
 
   build_signature: (req, consumer_secret, token) ->
-    [key, raw] = @.build_signature_base_string req, consumer_secret, token
+    [key, raw] = @build_signature_base_string req, consumer_secret, token
 
     cipher = crypto.createHmac 'sha1', key
     hashed = cipher.update(raw).digest('base64')
