@@ -65,6 +65,7 @@ describe 'LTI.Provider', () ->
 
     it 'should return false if missing lti_message_type', (done) =>
       req_missing_type =
+        url: '/'
         body:
           lti_message_type: ''
           lti_version: 'LTI-1p0'
@@ -76,6 +77,7 @@ describe 'LTI.Provider', () ->
 
     it 'should return false if incorrect LTI version', (done) =>
       req_wrong_version =
+        url: '/'
         body:
           lti_message_type: 'basic-lti-launch-request'
           lti_version: 'LTI-0p0'
@@ -88,6 +90,7 @@ describe 'LTI.Provider', () ->
 
     it 'should return false if no resource_link_id', (done) =>
       req_no_resource_link =
+        url: '/'
         body:
           lti_message_type: 'basic-lti-launch-request'
           lti_version: 'LTI-1p0'
@@ -98,7 +101,7 @@ describe 'LTI.Provider', () ->
 
     it 'should return false if bad oauth', (done) =>
       req =
-        path: '/test'
+        url: '/test'
         method: 'POST'
         body:
           lti_message_type: 'basic-lti-launch-request'
@@ -126,7 +129,7 @@ describe 'LTI.Provider', () ->
 
     it 'should return true if good headers and oauth', (done) =>
       req =
-        path: '/test'
+        url: '/test'
         method: 'POST'
         body:
           lti_message_type: 'basic-lti-launch-request'
@@ -150,7 +153,7 @@ describe 'LTI.Provider', () ->
 
     it 'should return false if nonce already seen', (done) =>
       req =
-        path: '/test'
+        url: '/test'
         method: 'POST'
         body:
           lti_message_type: 'basic-lti-launch-request'
@@ -182,7 +185,7 @@ describe 'LTI.Provider', () ->
       @provider = new @lti.Provider('key','secret')
 
       req =
-        path: '/test'
+        url: '/test'
         method: 'POST'
         body:
           context_id: "4"

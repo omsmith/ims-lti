@@ -1,4 +1,5 @@
 crypto    = require('crypto')
+url       = require 'url'
 
 
 
@@ -20,12 +21,28 @@ special_encode = (string) ->
 #   encoding them again
 #
 # Returns a string representing the request
-_clean_request_body = (body) ->
+_clean_request_body = (body, query) ->
+
   out = []
-  return body if typeof body isnt 'object'
-  for key, val of body
-    continue if key is 'oauth_signature'
-    out.push "#{key}=#{special_encode(val)}"
+
+  encodeParam = (key, val) ->
+    return "#{key}=#{special_encode(val)}"
+
+  cleanParams = (params) ->
+    return if typeof params isnt 'object'
+
+    for key, vals of params
+      continue if key is 'oauth_signature'
+      if Array.isArray(vals) is true
+        for val in vals
+          out.push encodeParam key, val
+      else
+        out.push encodeParam key, vals
+
+    return
+
+  cleanParams body
+  cleanParams query
 
   special_encode out.sort().join('&')
 
@@ -38,12 +55,13 @@ class HMAC_SHA1
 
   build_signature_base_string: (req, consumer_secret, token) ->
 
-    hitUrl = req.protocol + '://' + req.get('host') + req.url
+    parsedUrl = url.parse req.url, true
+    hitUrl = req.protocol + '://' + req.get('host') + parsedUrl.pathname
 
     sig = [
       req.method.toUpperCase()
       special_encode hitUrl
-      _clean_request_body req.body
+      _clean_request_body req.body, parsedUrl.query
     ]
 
     key = "#{consumer_secret}&"
