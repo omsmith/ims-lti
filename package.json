@@ -6,6 +6,7 @@
     "name": "James Rundquist",
     "email": "james@courseshark.com"
   },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/omsmith/ims-lti.git"
