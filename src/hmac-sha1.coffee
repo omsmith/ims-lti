@@ -1,5 +1,4 @@
 crypto    = require('crypto')
-inspect = (require 'util').inspect
 
 
 
