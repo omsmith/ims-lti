@@ -7,6 +7,11 @@
     "email": "james@courseshark.com"
   },
   "license": "MIT",
+  "keywords": [
+    "ims",
+    "lti",
+    "provider"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/omsmith/ims-lti.git"
