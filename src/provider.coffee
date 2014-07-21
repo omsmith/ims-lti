@@ -43,10 +43,10 @@ class Provider
   #
   # Returns true/false if is valid LTI request
   _valid_parameters: (req) ->
-    corrent_message_type = req.body.lti_message_type is 'basic-lti-launch-request'
+    correct_message_type = req.body.lti_message_type is 'basic-lti-launch-request'
     correct_version      = require('./ims-lti').supported_versions.indexOf(req.body.lti_version) isnt -1
     has_resource_link_id = req.body.resource_link_id?
-    corrent_message_type and correct_version and has_resource_link_id
+    correct_message_type and correct_version and has_resource_link_id
 
 
   # Helper to validate the OAuth information in the request
