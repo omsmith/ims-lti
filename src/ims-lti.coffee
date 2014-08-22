@@ -7,6 +7,7 @@ exports = module.exports =
   # Provider and Consumer classes
   Provider: require './provider'
   Consumer: require './consumer'
+  Errors:   require './errors'
 
   Stores:
     RedisStore:   require './redis-nonce-store'

@@ -1,5 +1,6 @@
 HMAC_SHA1         = require './hmac-sha1'
 MemoryNonceStore  = require './memory-nonce-store'
+errors            = require './errors'
 
 
 
@@ -11,16 +12,16 @@ class Provider
   constructor: (consumer_key, consumer_secret, nonceStore, signature_method=(new HMAC_SHA1()) ) ->
 
     if typeof consumer_key is 'undefined' or consumer_key is null
-      throw new Error 'Must specify consumer_key'
+      throw new errors.ConsumerError 'Must specify consumer_key'
 
     if typeof consumer_secret is 'undefined' or consumer_secret is null
-      throw new Error 'Must specify consumer_secret'
+      throw new errors.ConsumerError 'Must specify consumer_secret'
 
     if not nonceStore
       nonceStore = new MemoryNonceStore(consumer_key)
 
     if not nonceStore.isNonceStore?()
-      throw new Error 'Fourth argument must be a nonceStore object'
+      throw new errors.ParameterError 'Fourth argument must be a nonceStore object'
 
     @consumer_key     = consumer_key
     @consumer_secret  = consumer_secret
@@ -35,7 +36,7 @@ class Provider
   valid_request: (req, callback=()->) =>
     @parse_request(req)
     if not @_valid_parameters(req)
-      return callback(new Error('Invalid LTI parameters'), false)
+      return callback(new errors.ParameterError('Invalid LTI parameters'), false)
     @_valid_oauth req, (err, valid) -> callback err, valid
 
 
@@ -55,10 +56,10 @@ class Provider
   _valid_oauth: (req, callback) ->
     generated = @signer.build_signature req, @consumer_secret
     valid_signature = generated is req.body.oauth_signature
-    return callback new Error('Invalid Signature'), false if not valid_signature
+    return callback new errors.SignatureError('Invalid Signature'), false if not valid_signature
     @nonceStore.isNew req.body.oauth_nonce, req.body.oauth_timestamp, (err, valid) ->
       if not valid
-        callback new Error('Expired nonce'), false
+        callback new errors.NonceError('Expired nonce'), false
       else
         callback null, true
 
