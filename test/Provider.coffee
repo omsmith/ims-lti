@@ -1,5 +1,6 @@
-lti       = require '../'
 should    = require 'should'
+
+lti       = require '../'
 
 
 describe 'LTI.Provider', () ->
@@ -44,8 +45,8 @@ describe 'LTI.Provider', () ->
 
 
     it 'should throw an error if no consumer_key or consumer_secret', () =>
-      (()=>provider = new @lti.Provider()).should.throw()
-      (()=>provider = new @lti.Provider('consumer-key')).should.throw()
+      (()=>provider = new @lti.Provider()).should.throw(lti.Errors.ConsumerError)
+      (()=>provider = new @lti.Provider('consumer-key')).should.throw(lti.Errors.ConsumerError)
 
 
   describe 'Structure', () =>
@@ -72,6 +73,7 @@ describe 'LTI.Provider', () ->
           resource_link_id: 'http://link-to-resource.com/resource'
       @provider.valid_request req_missing_type, (err, valid) ->
         err.should.not.equal null
+        err.should.be.instanceof(lti.Errors.ParameterError)
         valid.should.equal false
         done()
 
@@ -84,6 +86,7 @@ describe 'LTI.Provider', () ->
           resource_link_id: 'http://link-to-resource.com/resource'
       @provider.valid_request req_wrong_version, (err, valid) ->
         err.should.not.equal null
+        err.should.be.instanceof(lti.Errors.ParameterError)
         valid.should.equal false
         done()
 
@@ -96,6 +99,7 @@ describe 'LTI.Provider', () ->
           lti_version: 'LTI-1p0'
       @provider.valid_request req_no_resource_link, (err, valid) ->
         err.should.not.equal null
+        err.should.be.instanceof(lti.Errors.ParameterError)
         valid.should.equal false
         done()
 
@@ -122,6 +126,7 @@ describe 'LTI.Provider', () ->
 
       @provider.valid_request req, (err, valid) ->
         err.should.not.equal null
+        err.should.be.instanceof(lti.Errors.SignatureError)
         valid.should.equal false
         done()
 
@@ -174,6 +179,7 @@ describe 'LTI.Provider', () ->
         valid.should.equal true
         @provider.valid_request req, (err, valid) ->
           should.exist err
+          err.should.be.instanceof(lti.Errors.NonceError)
           valid.should.equal false
           done()
 
