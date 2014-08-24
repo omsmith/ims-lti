@@ -18,7 +18,7 @@ class Provider
       throw new errors.ConsumerError 'Must specify consumer_secret'
 
     if not nonceStore
-      nonceStore = new MemoryNonceStore(consumer_key)
+      nonceStore = new MemoryNonceStore()
 
     if not nonceStore.isNonceStore?()
       throw new errors.ParameterError 'Fourth argument must be a nonceStore object'

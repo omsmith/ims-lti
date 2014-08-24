@@ -5,7 +5,7 @@ EXPIRE_IN_SEC = 5 * 60
 
 class MemoryNonceStore extends NonceStore
 
-  constructor: (consumer_key) ->
+  constructor: () ->
     @used = []
 
   isNew: (nonce, timestamp, next=()->)->

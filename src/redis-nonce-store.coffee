@@ -5,7 +5,9 @@ EXPIRE_IN_SEC = 5*60
 
 class RedisNonceStore extends NonceStore
 
-  constructor: (consumer_key, redisClient) ->
+  constructor: (redisClient) ->
+    if typeof redisClient is 'string' and arguments.length is 2
+      redisClient = arguments[1]
     @redis = redisClient
 
   isNew: (nonce, timestamp, next=()->)->
