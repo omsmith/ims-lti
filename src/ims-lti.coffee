@@ -11,7 +11,7 @@ exports = module.exports =
 
   Stores:
     RedisStore:   require './redis-nonce-store'
-    MemoryStore:  require './redis-nonce-store'
+    MemoryStore:  require './memory-nonce-store'
     NonceStore:   require './nonce-store'
 
   # Which version of the LTI standard are accepted
