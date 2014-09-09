@@ -305,6 +305,23 @@ describe 'LTI.Provider', () ->
         body:
           roles: 'Instructor,Administrator'
 
-      provider.instructor.should.equal true
+    it 'should handle different role types from the specification', () =>
+      provider = new @lti.Provider('key', 'secret')
+      provider.parse_request
+        body:
+          roles: 'urn:lti:role:ims/lis/Student,urn:lti:sysrole:ims/lis/Administrator,urn:lti:instrole:ims/lis/Alumni'
+
+      provider.student.should.equal true
       provider.admin.should.equal true
+      provider.alumni.should.equal true
+
+    it 'should handle garbage roles that do not match the specification', () =>
+      provider = new @lti.Provider('key', 'secret')
+      provider.parse_request
+        body:
+          roles: 'urn:lti::ims/lis/Student,urn:lti:sysrole:ims/lis/Administrator/,/Alumni'
+
+      provider.student.should.equal false
+      provider.admin.should.equal false
+      provider.alumni.should.equal false
 
