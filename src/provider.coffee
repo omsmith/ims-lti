@@ -105,11 +105,13 @@ class Provider
 
 
   # has_role Helper
-  #
-  #
   has_role: (role) ->
-    role = role.replace /([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1'
-    regex = new RegExp "^(urn:lti:role:ims/lis/)?#{role}$", 'i'
+    # There's 3 different types of roles: system, institution, and context. Each one has their own unique identifier
+    # string within the urn prefix. This regular expression can verify the prefix is there at all, and if it is, ensure
+    # that it matches one of the three different ways that it can be formatted. Additionally, context roles can have a
+    # suffix that futher describes what the role may be (such as an instructor that is a lecturer). Those details are
+    # probably a bit too specific for most cases, so we can just verify that they are optionally there
+    regex = new RegExp "^(urn:lti:(sys|inst)?role:ims/lis/)?#{role}(/.+)?$", 'i'
     @body.roles && @body.roles.some (r) -> regex.test(r)
 
 
