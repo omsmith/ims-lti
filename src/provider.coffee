@@ -75,13 +75,19 @@ class Provider
 
     @body.roles = @body.roles.split ',' if typeof @body.roles is 'string'
 
-    @student = @has_role('learner') or @has_role('student')
-    @instructor = @has_role('instructor') or @has_role('faculty') or @has_role('staff')
+    @admin = @has_role('Administrator')
+    @alumni = @has_role('Alumni')
     @content_developer = @has_role('ContentDeveloper')
-    @member = @has_role('Member')
+    @guest = @has_role('Guest')
+    @instructor = @has_role('Instructor') or @has_role('Faculty') or @has_role('Staff')
     @manager = @has_role('Manager')
+    @member = @has_role('Member')
     @mentor = @has_role('Mentor')
-    @admin = @has_role('administrator')
+    @none = @has_role('None')
+    @observer = @has_role('Observer')
+    @other = @has_role('Other')
+    @prospective_student = @has_role('ProspectiveStudent')
+    @student = @has_role('Learner') or @has_role('Student')
     @ta = @has_role('TeachingAssistant')
 
     @launch_request = @body.lti_message_type is 'basic-lti-launch-request'
