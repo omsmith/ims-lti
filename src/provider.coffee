@@ -105,6 +105,8 @@ class Provider
     @username = @body.lis_person_name_given or @body.lis_person_name_family or @body.lis_person_name_full or ''
     @userId   = @body.user_id
 
+    @mentor_user_ids = (decodeURIComponent(id) for id in @body.role_scope_mentor.split ',') if typeof @body.role_scope_mentor is 'string'
+
     # Context information
     @context_id     = @body.context_id
     @context_label  = @body.context_label
