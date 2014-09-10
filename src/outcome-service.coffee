@@ -102,7 +102,6 @@ class OutcomeService
       res.setEncoding 'utf8'
       res.on 'data', (chunk) => body += chunk
       res.on 'end', () =>
-        console.log body
         if res.statusCode == 200
           @_process_response body, callback
         else
@@ -134,8 +133,12 @@ class OutcomeService
   _process_response: (body, callback) ->
     xml2js.parseString body, trim: true, (err, result) =>
       return callback new errors.OutcomeResponseError('The server responsed with an invalid XML document'), false if err
-      info = result?.imsx_POXHeader?.imsx_POXResponseHeaderInfo
-      callback null, true
+      info = result?.imsx_POXEnvelopeResponse?.imsx_POXHeader?.imsx_POXResponseHeaderInfo?.imsx_statusInfo
+
+      if info?.imsx_codeMajor == 'success'
+        callback null, true
+      else
+        callback new errors.OutcomeResponseError('The request provided was invalid'), false
 
 
 
