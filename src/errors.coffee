@@ -13,6 +13,9 @@ class SignatureError extends Error
 class NonceError extends Error
   constructor: ->
     super
+class OutcomeResponseError extends Error
+  constructor: ->
+    super
 
 module.exports =
   ConsumerError: ConsumerError
@@ -20,3 +23,4 @@ module.exports =
   ParameterError: ParameterError
   SignatureError: SignatureError
   NonceError: NonceError
+  OutcomeResponseError: OutcomeResponseError
