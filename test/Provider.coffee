@@ -288,8 +288,8 @@ describe 'LTI.Provider', () ->
       @provider.context_label.should.equal "PHYS 2112"
       @provider.context_title.should.equal "Introduction To Physics"
 
-    it 'should have response outcome_service boolean', () =>
-      @provider.outcome_service.should.equal true
+    it 'should have response outcome_service object', () =>
+      @provider.outcome_service.should.exist
 
     it 'should account for the standardized urn prefix', () =>
       provider = new @lti.Provider('key', 'secret')

@@ -5,9 +5,10 @@ exports = module.exports =
   version: '0.0.0'
 
   # Provider and Consumer classes
-  Provider: require './provider'
-  Consumer: require './consumer'
-  Errors:   require './errors'
+  Provider:        require './provider'
+  Consumer:        require './consumer'
+  OutcomeService:  require './outcome-service'
+  Errors:          require './errors'
 
   Stores:
     RedisStore:   require './redis-nonce-store'
