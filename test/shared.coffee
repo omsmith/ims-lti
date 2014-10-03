@@ -9,8 +9,8 @@ exports.shouldBehaveLikeNonce = (newStore=()->) =>
     @store = newStore()
 
   after () =>
-    if @store.client
-      @store.client.flushdb()
+    if @store.redis
+      @store.redis.flushdb()
 
 
 
