@@ -75,13 +75,19 @@ class Provider
 
     @body.roles = @body.roles.split ',' if typeof @body.roles is 'string'
 
-    @student = @has_role('learner') or @has_role('student')
-    @instructor = @has_role('instructor') or @has_role('faculty') or @has_role('staff')
+    @admin = @has_role('Administrator')
+    @alumni = @has_role('Alumni')
     @content_developer = @has_role('ContentDeveloper')
-    @member = @has_role('Member')
+    @guest = @has_role('Guest')
+    @instructor = @has_role('Instructor') or @has_role('Faculty') or @has_role('Staff')
     @manager = @has_role('Manager')
+    @member = @has_role('Member')
     @mentor = @has_role('Mentor')
-    @admin = @has_role('administrator')
+    @none = @has_role('None')
+    @observer = @has_role('Observer')
+    @other = @has_role('Other')
+    @prospective_student = @has_role('ProspectiveStudent')
+    @student = @has_role('Learner') or @has_role('Student')
     @ta = @has_role('TeachingAssistant')
 
     @launch_request = @body.lti_message_type is 'basic-lti-launch-request'
@@ -99,11 +105,13 @@ class Provider
 
 
   # has_role Helper
-  #
-  #
   has_role: (role) ->
-    role = role.replace /([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1'
-    regex = new RegExp "^(urn:lti:role:ims/lis/)?#{role}$", 'i'
+    # There's 3 different types of roles: system, institution, and context. Each one has their own unique identifier
+    # string within the urn prefix. This regular expression can verify the prefix is there at all, and if it is, ensure
+    # that it matches one of the three different ways that it can be formatted. Additionally, context roles can have a
+    # suffix that futher describes what the role may be (such as an instructor that is a lecturer). Those details are
+    # probably a bit too specific for most cases, so we can just verify that they are optionally there
+    regex = new RegExp "^(urn:lti:(sys|inst)?role:ims/lis/)?#{role}(/.+)?$", 'i'
     @body.roles && @body.roles.some (r) -> regex.test(r)
 
 
