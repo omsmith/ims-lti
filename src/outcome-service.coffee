@@ -12,6 +12,13 @@ errors       = require './errors'
 
 
 
+navigateXml = (xmlObject, path) =>
+  for part in path.split '.'
+    xmlObject = xmlObject?[part]?[0]
+
+  return xmlObject
+
+
 class OutcomeDocument
 
   constructor: (type, source_did) ->
@@ -74,7 +81,15 @@ class OutcomeService
 
   send_read_result: (callback) ->
     doc = new OutcomeDocument @REQUEST_READ, @source_did, @provider
-    @_send_request doc, callback
+    @_send_request doc, (err, result, xml) =>
+      return callback(err, result) if err
+
+      score = parseFloat navigateXml(xml, 'imsx_POXBody.readResultResponse.result.resultScore.textString'), 10
+
+      if (isNaN(score))
+        callback new errors.OutcomeResponseError('Invalid score response'), false
+      else
+        callback null, score
 
 
   send_delete_result: (callback) ->
@@ -133,12 +148,14 @@ class OutcomeService
   _process_response: (body, callback) ->
     xml2js.parseString body, trim: true, (err, result) =>
       return callback new errors.OutcomeResponseError('The server responsed with an invalid XML document'), false if err
-      info = result?.imsx_POXEnvelopeResponse?.imsx_POXHeader?.imsx_POXResponseHeaderInfo?.imsx_statusInfo
 
-      if info?.imsx_codeMajor == 'success'
-        callback null, true
-      else
+      response  = result?.imsx_POXEnvelopeResponse
+      code      = navigateXml response, 'imsx_POXHeader.imsx_POXResponseHeaderInfo.imsx_statusInfo.imsx_codeMajor'
+
+      if code != 'success'
         callback new errors.OutcomeResponseError('The request provided was invalid'), false
+      else
+        callback null, true, response
 
 
 
