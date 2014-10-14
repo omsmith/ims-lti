@@ -35,19 +35,19 @@ describe 'LTI.Outcomes', () =>
         next()
 
     it 'should handle a result higher than 1', () =>
-      (() =>
-        @provider.outcome_service.send_replace_result 5, null
-      ).should.throw()
+      @provider.outcome_service.send_replace_result 5, (err, result) =>
+        should.exist err
+        result.should.equal false
 
     it 'should handle a result lower than 0', () =>
-      (() =>
-        @provider.outcome_service.send_replace_result -5, null
-      ).should.throw()
+      @provider.outcome_service.send_replace_result -5, (err, result) =>
+        should.exist err
+        result.should.equal false
 
     it 'should handle a result that is undefined', () =>
-      (() =>
-        @provider.outcome_service.send_replace_result null, null
-      ).should.throw()
+      @provider.outcome_service.send_replace_result null, (err, result) =>
+        should.exist err
+        result.should.equal false
 
   describe 'read', () =>
     it 'should be able to read a result given an id', (next) =>

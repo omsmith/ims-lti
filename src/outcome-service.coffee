@@ -75,9 +75,13 @@ class OutcomeService
 
   send_replace_result: (score, callback) ->
     doc = new OutcomeDocument @REQUEST_REPLACE, @source_did, @provider
-    doc.add_score score, @language
-    @_send_request doc, callback
 
+    try
+      doc.add_score score, @language
+      @_send_request doc, callback
+    catch err
+      callback err, false
+    
 
   send_read_result: (callback) ->
     doc = new OutcomeDocument @REQUEST_READ, @source_did, @provider
