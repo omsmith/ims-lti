@@ -6,6 +6,13 @@
     "name": "James Rundquist",
     "email": "james@courseshark.com"
   },
+  "contributors": [{
+    "name": "Owen Smith",
+    "email": "owen@omsmith.ca"
+  }, {
+    "name": "David Kosub",
+    "email": "dave@davidkosub.com"
+  }],
   "license": "MIT",
   "keywords": [
     "ims",
