@@ -220,6 +220,7 @@ describe 'LTI.Provider', () ->
           resource_link_id: "1"
           resource_link_title: "Fun LTI example!"
           roles: "Learner"
+          role_scope_mentor: "1234,5678,12%2C34"
           tool_consumer_info_product_family_code: "moodle"
           tool_consumer_info_version: "2013051400"
           tool_consumer_instance_guid: "localhost"
@@ -253,6 +254,7 @@ describe 'LTI.Provider', () ->
       @provider.body.should.have.property('resource_link_id')
       @provider.body.should.have.property('resource_link_title')
       @provider.body.should.have.property('roles')
+      @provider.body.should.have.property('role_scope_mentor')
       @provider.body.should.have.property('tool_consumer_info_product_family_code')
       @provider.body.should.have.property('tool_consumer_info_version')
       @provider.body.should.have.property('tool_consumer_instance_guid')
@@ -283,13 +285,16 @@ describe 'LTI.Provider', () ->
     it 'should have user id accessor', () =>
       @provider.userId.should.equal "4"
 
+    it 'should handle the role_scope_mentor id array', () =>
+      @provider.mentor_user_ids.should.eql ['1234', '5678', '12,34']
+
     it 'should have context accessors', () =>
       @provider.context_id.should.equal "4"
       @provider.context_label.should.equal "PHYS 2112"
       @provider.context_title.should.equal "Introduction To Physics"
 
-    it 'should have response outcome_service boolean', () =>
-      @provider.outcome_service.should.equal true
+    it 'should have response outcome_service object', () =>
+      @provider.outcome_service.should.exist
 
     it 'should account for the standardized urn prefix', () =>
       provider = new @lti.Provider('key', 'secret')

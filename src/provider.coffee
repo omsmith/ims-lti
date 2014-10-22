@@ -1,5 +1,6 @@
 HMAC_SHA1         = require './hmac-sha1'
 MemoryNonceStore  = require './memory-nonce-store'
+OutcomeService    = require './outcome-service'
 errors            = require './errors'
 
 
@@ -92,11 +93,19 @@ class Provider
 
     @launch_request = @body.lti_message_type is 'basic-lti-launch-request'
 
-    @outcome_service = !!(@body.lis_outcome_service_url and @body.lis_result_sourcedid)
+    # Outcomes for the 1.1 gradebook extension
+    if (@body.lis_outcome_service_url and @body.lis_result_sourcedid)
+      # The LTI 1.1 spec says that the language parameter is usually implied to be en, so the OutcomeService object
+      # defaults to en until the spec updates and says there's other possible format options.
+      @outcome_service = new OutcomeService @body.lis_outcome_service_url, @body.lis_result_sourcedid, @
+    else
+      @outcome_service = false;
 
     # user
     @username = @body.lis_person_name_given or @body.lis_person_name_family or @body.lis_person_name_full or ''
     @userId   = @body.user_id
+
+    @mentor_user_ids = (decodeURIComponent(id) for id in @body.role_scope_mentor.split ',') if typeof @body.role_scope_mentor is 'string'
 
     # Context information
     @context_id     = @body.context_id
@@ -110,7 +119,7 @@ class Provider
     # string within the urn prefix. This regular expression can verify the prefix is there at all, and if it is, ensure
     # that it matches one of the three different ways that it can be formatted. Additionally, context roles can have a
     # suffix that futher describes what the role may be (such as an instructor that is a lecturer). Those details are
-    # probably a bit too specific for most cases, so we can just verify that they are optionally there
+    # probably a bit too specific for most cases, so we can just verify that they are optionally there.
     regex = new RegExp "^(urn:lti:(sys|inst)?role:ims/lis/)?#{role}(/.+)?$", 'i'
     @body.roles && @body.roles.some (r) -> regex.test(r)
 

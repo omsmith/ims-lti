@@ -53,28 +53,25 @@ class HMAC_SHA1
   toString: () ->
     'HMAC_SHA1'
 
-  build_signature_base_string: (req, consumer_secret, token) ->
-
-    parsedUrl = url.parse req.url, true
-    hitUrl = req.protocol + '://' + req.get('host') + parsedUrl.pathname
-
+  build_signature_raw: (req_url, parsed_url, method, params, consumer_secret, token) ->
     sig = [
-      req.method.toUpperCase()
-      special_encode hitUrl
-      _clean_request_body req.body, parsedUrl.query
+      method.toUpperCase()
+      special_encode req_url
+      _clean_request_body params, parsed_url.query
     ]
 
-    key = "#{consumer_secret}&"
-    key += token if token
-
-    raw = sig.join '&'
-    [key, raw]
+    @sign_string sig.join('&'), consumer_secret, token
 
   build_signature: (req, consumer_secret, token) ->
-    [key, raw] = @build_signature_base_string req, consumer_secret, token
+    parsedUrl  = url.parse req.url, true
+    hitUrl     = req.protocol + '://' + req.get('host') + parsedUrl.pathname
 
-    cipher = crypto.createHmac 'sha1', key
-    hashed = cipher.update(raw).digest('base64')
+    @build_signature_raw hitUrl, parsedUrl, req.method, req.body, consumer_secret, token
 
+  sign_string: (str, key, token) ->
+    key = "#{key}&"
+    key += token if token
+
+    crypto.createHmac('sha1', key).update(str).digest('base64')
 
 exports = module.exports = HMAC_SHA1

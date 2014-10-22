@@ -23,6 +23,11 @@
   "scripts": {
     "prepublish": "make build"
   },
+  "dependencies": {
+    "xml2js": "~0.4.0",
+    "xmlbuilder": "~2.4.0",
+    "node-uuid": "~1.4.0"
+  },
   "devDependencies": {
     "redis": "0.8.3",
     "should": "1.2.2",
