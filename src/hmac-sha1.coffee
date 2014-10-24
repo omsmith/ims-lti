@@ -62,11 +62,22 @@ class HMAC_SHA1
 
     @sign_string sig.join('&'), consumer_secret, token
 
-  build_signature: (req, consumer_secret, token) ->
-    parsedUrl  = url.parse req.url, true
-    hitUrl     = req.protocol + '://' + req.get('host') + parsedUrl.pathname
+  build_signature: (req, body, consumer_secret, token) ->
+    hapiRawReq = req.raw and req.raw.req
+    if hapiRawReq
+      req = hapiRawReq
 
-    @build_signature_raw hitUrl, parsedUrl, req.method, req.body, consumer_secret, token
+    originalUrl = req.originalUrl or req.url
+    protocol = req.protocol
+    
+    if protocol is undefined
+      encrypted = req.connection.encrypted
+      protocol = (encrypted and 'https') or 'http'
+    
+    parsedUrl  = url.parse originalUrl, true
+    hitUrl     = protocol + '://' + req.headers.host + parsedUrl.pathname
+
+    @build_signature_raw hitUrl, parsedUrl, req.method, body, consumer_secret, token
 
   sign_string: (str, key, token) ->
     key = "#{key}&"

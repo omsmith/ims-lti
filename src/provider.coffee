@@ -34,31 +34,43 @@ class Provider
   # Returns true/false if is valid
   #
   # Sets up request variables for easier access down the line
-  valid_request: (req, callback=()->) =>
-    @parse_request(req)
-    if not @_valid_parameters(req)
+  valid_request: (req, body, callback) =>
+    if not callback
+      callback = body
+      body = undefined
+    
+    body = body or req.body or req.payload
+    callback = callback or () ->
+    
+    @parse_request(req, body)
+    
+    if not @_valid_parameters(body)
       return callback(new errors.ParameterError('Invalid LTI parameters'), false)
-    @_valid_oauth req, (err, valid) -> callback err, valid
+    
+    @_valid_oauth req, body, callback
 
 
   # Helper to validate basic LTI parameters
   #
   # Returns true/false if is valid LTI request
-  _valid_parameters: (req) ->
-    correct_message_type = req.body.lti_message_type is 'basic-lti-launch-request'
-    correct_version      = require('./ims-lti').supported_versions.indexOf(req.body.lti_version) isnt -1
-    has_resource_link_id = req.body.resource_link_id?
+  _valid_parameters: (body) ->
+    if not body
+      return false
+    
+    correct_message_type = body.lti_message_type is 'basic-lti-launch-request'
+    correct_version      = require('./ims-lti').supported_versions.indexOf(body.lti_version) isnt -1
+    has_resource_link_id = body.resource_link_id?
     correct_message_type and correct_version and has_resource_link_id
 
 
   # Helper to validate the OAuth information in the request
   #
   # Returns true/false if is valid OAuth signatue and nonce
-  _valid_oauth: (req, callback) ->
-    generated = @signer.build_signature req, @consumer_secret
-    valid_signature = generated is req.body.oauth_signature
+  _valid_oauth: (req, body, callback) ->
+    generated = @signer.build_signature req, body, @consumer_secret
+    valid_signature = generated is body.oauth_signature
     return callback new errors.SignatureError('Invalid Signature'), false if not valid_signature
-    @nonceStore.isNew req.body.oauth_nonce, req.body.oauth_timestamp, (err, valid) ->
+    @nonceStore.isNew body.oauth_nonce, body.oauth_timestamp, (err, valid) ->
       if not valid
         callback new errors.NonceError('Expired nonce'), false
       else
@@ -69,8 +81,10 @@ class Provider
   #  Strips 'oauth_' parameters for saftey
   #
   # Does not return anything
-  parse_request: (req) =>
-    for key, val of req.body
+  parse_request: (req, body) =>
+    body = body or req.body or req.payload
+    
+    for key, val of body
       continue if key.match(/^oauth_/)
       @body[key] = val
 
