@@ -83,6 +83,28 @@ store           = new RedisNonceStore('consumer_key', client)
 provider = new lti.Provider consumer_key, consumer_secret, store
 ```
 
+### Outcomes
+
+The outcomes feature is part of the LTI 1.1 specification and is new to ims-lti 1.0. All of the behind-the-scenes work necessary to get the ball rolling with it is already implemented for you, all you need to do is submit grades.
+
+```coffeescript
+provider = new lti.Provider consumer_key, consumer_secret
+
+provider.valid_request req, (err, is_valid) ->
+  # Check if the request is valid and if the outcomes service exists.
+  if (!is_valid || !provider.outcome_service) return false
+
+  # Replace accepts a value between 0 and 1.
+  provider.outcome_service.send_replace_result .5, (err, result) ->
+    console.log result # True or false
+
+  provider.outcome_service.send_read_result (err, result) ->
+    console.log result # Value of the result already submitted from this embed
+
+  provider.outcome_service.send_delete_result (err, result) ->
+    console.log result # True or false
+```
+
 ## Running Tests
 To run the test suite first installing the dependencies:
 ```
