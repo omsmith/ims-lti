@@ -9,6 +9,7 @@ exports = module.exports =
   Consumer:        require './consumer'
   OutcomeService:  require './outcome-service'
   Errors:          require './errors'
+  HMacSha1:        require './hmac-sha1'
 
   Stores:
     RedisStore:   require './redis-nonce-store'
