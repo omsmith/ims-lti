@@ -1,6 +1,6 @@
 {
   "name": "ims-lti",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Module for building an LTI Tool Provider and accept LTI launch requests",
   "author": {
     "name": "James Rundquist",
