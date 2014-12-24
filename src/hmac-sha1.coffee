@@ -70,10 +70,15 @@ class HMAC_SHA1
     originalUrl = req.originalUrl or req.url
     protocol = req.protocol
     
-    if protocol is undefined
-      encrypted = req.connection.encrypted
-      protocol = (encrypted and 'https') or 'http'
-    
+    if req.headers and req.headers['x-forwarded-proto']
+      protocol = req.headers['x-forwarded-proto']
+    else
+      protocol = req.protocol
+
+      if protocol is undefined
+        encrypted = req.connection.encrypted
+        protocol = (encrypted and 'https') or 'http'
+
     parsedUrl  = url.parse originalUrl, true
     hitUrl     = protocol + '://' + req.headers.host + parsedUrl.pathname
 
