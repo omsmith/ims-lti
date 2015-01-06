@@ -9,6 +9,7 @@ xml2js       = require 'xml2js'
 xml_builder  = require 'xmlbuilder'
 
 errors       = require './errors'
+utils        = require './utils'
 
 
 
@@ -144,7 +145,7 @@ class OutcomeService
 
     headers.oauth_signature = @provider.signer.build_signature_raw @service_url_oauth, @service_url_parts, 'POST', headers, @provider.consumer_secret
 
-    Authorization:     'OAuth realm="",' + ("#{key}=\"#{encodeURIComponent(val)}\"" for key, val of headers).join ','
+    Authorization:     'OAuth realm="",' + ("#{key}=\"#{utils.special_encode(val)}\"" for key, val of headers).join ','
     'Content-Type':    'application/xml'
     'Content-Length':  body.length
 
