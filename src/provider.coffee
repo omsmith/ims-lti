@@ -6,10 +6,6 @@ errors            = require './errors'
 
 
 class Provider
-
-  # Used as accessor to request parameters
-  body: {}
-
   constructor: (consumer_key, consumer_secret, nonceStore, signature_method=(new HMAC_SHA1()) ) ->
 
     if typeof consumer_key is 'undefined' or consumer_key is null
@@ -28,6 +24,7 @@ class Provider
     @consumer_secret  = consumer_secret
     @signer           = signature_method
     @nonceStore       = nonceStore
+    @body             = {}
 
 
   # Verify parameter and OAuth signature by passing the request object
