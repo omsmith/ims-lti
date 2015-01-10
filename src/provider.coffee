@@ -2,6 +2,7 @@ HMAC_SHA1         = require './hmac-sha1'
 MemoryNonceStore  = require './memory-nonce-store'
 OutcomeService    = require './outcome-service'
 errors            = require './errors'
+extensions        = require './extensions'
 
 
 
@@ -123,6 +124,9 @@ class Provider
     @context_label  = @body.context_label
     @context_title  = @body.context_title
 
+    # Load up the extensions!
+    extension.init(@) for extension_name, extension of extensions
+
 
   # has_role Helper
   has_role: (role) ->
@@ -133,8 +137,6 @@ class Provider
     # probably a bit too specific for most cases, so we can just verify that they are optionally there.
     regex = new RegExp "^(urn:lti:(sys|inst)?role:ims/lis/)?#{role}(/.+)?$", 'i'
     @body.roles && @body.roles.some (r) -> regex.test(r)
-
-
 
 
 
