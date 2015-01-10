@@ -15,6 +15,8 @@ exports = module.exports =
     MemoryStore:  require './memory-nonce-store'
     NonceStore:   require './nonce-store'
 
+  Extensions: require './extensions'
+
   # Which version of the LTI standard are accepted
   supported_versions: [
     'LTI-1p0'
