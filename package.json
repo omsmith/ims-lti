@@ -6,13 +6,16 @@
     "name": "James Rundquist",
     "email": "james@courseshark.com"
   },
-  "contributors": [{
-    "name": "Owen Smith",
-    "email": "owen@omsmith.ca"
-  }, {
-    "name": "David Kosub",
-    "email": "dave@davidkosub.com"
-  }],
+  "contributors": [
+    {
+      "name": "Owen Smith",
+      "email": "owen@omsmith.ca"
+    },
+    {
+      "name": "David Kosub",
+      "email": "dave@davidkosub.com"
+    }
+  ],
   "license": "MIT",
   "keywords": [
     "ims",
@@ -36,13 +39,13 @@
     "node-uuid": "~1.4.0"
   },
   "devDependencies": {
-    "redis": "0.8.3",
-    "should": "1.2.2",
-    "coffee-script": "~1.6.2",
-    "coffee-coverage": "~0.4.2",
-    "mocha": "~1.15.1",
+    "coffee-coverage": "^0.4.4",
+    "coffee-script": "^1.8.0",
+    "coveralls": "^2.11.2",
+    "mocha": "^2.1.0",
     "mocha-lcov-reporter": "0.0.1",
-    "mocha-multi": "~0.4.0",
-    "coveralls": "~2.10.0"
+    "mocha-multi": "^0.6.0",
+    "redis": "^0.12.1",
+    "should": "^4.6.1"
   }
 }

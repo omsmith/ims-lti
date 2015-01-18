@@ -54,7 +54,7 @@ describe 'LTI.Provider', () ->
       @provider = new @lti.Provider('key','secret')
     it 'should have valid_request method', () =>
       should.exist @provider.valid_request
-      @provider.valid_request.should.be.a('function')
+      @provider.valid_request.should.be.a.Function
 
 
 
