@@ -1,3 +1,5 @@
+extensions = require './extensions'
+
 # Export the main object
 exports = module.exports =
 
@@ -7,7 +9,7 @@ exports = module.exports =
   # Provider and Consumer classes
   Provider:        require './provider'
   Consumer:        require './consumer'
-  OutcomeService:  require './outcome-service'
+  OutcomeService:  extensions.Outcomes.OutcomesService
   Errors:          require './errors'
 
   Stores:
@@ -15,7 +17,7 @@ exports = module.exports =
     MemoryStore:  require './memory-nonce-store'
     NonceStore:   require './nonce-store'
 
-  Extensions: require './extensions'
+  Extensions: extensions
 
   # Which version of the LTI standard are accepted
   supported_versions: [

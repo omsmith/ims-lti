@@ -4,7 +4,7 @@ shared  = require './shared'
 lti     = require '../'
 
 
-describe 'LTI.Outcomes', () =>
+describe 'LTI.Extensions.Outcomes', () =>
   before () =>
     @server    = shared.outcomesWebServer()
     @provider  = new lti.Provider 'key', 'secret'
