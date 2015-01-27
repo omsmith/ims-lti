@@ -12,7 +12,6 @@ errors       = require '../errors'
 utils        = require '../utils'
 
 
-
 navigateXml = (xmlObject, path) ->
   for part in path.split '.'
     xmlObject = xmlObject?[part]?[0]
@@ -20,9 +19,10 @@ navigateXml = (xmlObject, path) ->
   return xmlObject
 
 
+
 class OutcomeDocument
 
-  constructor: (type, source_did) ->
+  constructor: (type, source_did, @outcome_service) ->
     # Build and configure the document
     xmldec =
       version:     '1.0'
@@ -41,17 +41,37 @@ class OutcomeDocument
     # Apply the source DID to the body
     @body.ele('sourceGUID').ele('sourcedId', source_did)
 
+
   add_score: (score, language) ->
     if (typeof score != 'number' or score < 0 or score > 1.0)
       throw new errors.ParameterError 'Score must be a floating point number >= 0 and <= 1'
 
-    eScore = @body.ele('result').ele('resultScore')
+    eScore = @_result_ele().ele('resultScore')
     eScore.ele('language', language)
     eScore.ele('textString', score)
 
 
+  add_text: (text) ->
+    @_add_payload('text', text)
+
+
+  add_url: (url) ->
+    @_add_payload('url', url)
+
+
   finalize: () ->
     @doc.end(pretty: true)
+
+
+  _result_ele: () ->
+    @result or (@result = @body.ele('result'))
+
+
+  _add_payload: (type, value) ->
+    throw new errors.ExtensionError('Result data payload has already been set') if @has_payload
+    throw new errors.ExtensionError('Result data type is not supported') if !@outcome_service.supports_result_data(type)
+    @_result_ele().ele('resultData').ele(type, value)
+    @has_payload = true
 
 
 
@@ -62,7 +82,13 @@ class OutcomeService
   REQUEST_DELETE:   'deleteResult'
 
 
-  constructor: (@service_url, @source_did, @provider, @language = 'en') ->
+  constructor: (@provider, @language = 'en') ->
+    body = provider.body
+
+    @service_url       = body.lis_outcome_service_url
+    @source_did        = body.lis_result_sourcedid
+    @result_data_types = body.ext_outcome_data_values_accepted and body.ext_outcome_data_values_accepted.split(',') or []
+
     # Break apart the service url into the url fragments for use by OAuth signing, additionally prepare the OAuth
     # specific url that used exclusively in the signing process.
     parts = @service_url_parts = url.parse @service_url
@@ -70,17 +96,39 @@ class OutcomeService
 
 
   send_replace_result: (score, callback) ->
-    doc = new OutcomeDocument @REQUEST_REPLACE, @source_did
+    doc = new OutcomeDocument @REQUEST_REPLACE, @source_did, @
 
     try
       doc.add_score score, @language
       @_send_request doc, callback
     catch err
       callback err, false
+
+
+  send_replace_result_with_text: (score, text, callback) ->
+    doc = new OutcomeDocument @REQUEST_REPLACE, @source_did, @
+
+    try
+      doc.add_score score, @language,
+      doc.add_text text
+      @_send_request doc, callback
+    catch err
+      callback err, false
+
+
+  send_replace_result_with_url: (score, url, callback) ->
+    doc = new OutcomeDocument @REQUEST_REPLACE, @source_did, @
+
+    try
+      doc.add_score score, @language,
+      doc.add_url url
+      @_send_request doc, callback
+    catch err
+      callback err, false
     
 
   send_read_result: (callback) ->
-    doc = new OutcomeDocument @REQUEST_READ, @source_did
+    doc = new OutcomeDocument @REQUEST_READ, @source_did, @
     @_send_request doc, (err, result, xml) =>
       return callback(err, result) if err
 
@@ -93,8 +141,12 @@ class OutcomeService
 
 
   send_delete_result: (callback) ->
-    doc = new OutcomeDocument @REQUEST_DELETE, @source_did
+    doc = new OutcomeDocument @REQUEST_DELETE, @source_did, @
     @_send_request doc, callback
+
+
+  supports_result_data: (type) ->
+    return @result_data_types.length and (!type or @result_data_types.indexOf(type) != -1)
 
 
   _send_request: (doc, callback) ->
@@ -163,7 +215,7 @@ exports.init = (provider) ->
   if (provider.body.lis_outcome_service_url and provider.body.lis_result_sourcedid)
     # The LTI 1.1 spec says that the language parameter is usually implied to be en, so the OutcomeService object
     # defaults to en until the spec updates and says there's other possible format options.
-    provider.outcome_service = new OutcomeService provider.body.lis_outcome_service_url, provider.body.lis_result_sourcedid, provider
+    provider.outcome_service = new OutcomeService provider
   else
     provider.outcome_service = false
 
