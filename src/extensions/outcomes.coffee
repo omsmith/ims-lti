@@ -8,12 +8,12 @@ uuid         = require 'node-uuid'
 xml2js       = require 'xml2js'
 xml_builder  = require 'xmlbuilder'
 
-errors       = require './errors'
-utils        = require './utils'
+errors       = require '../errors'
+utils        = require '../utils'
 
 
 
-navigateXml = (xmlObject, path) =>
+navigateXml = (xmlObject, path) ->
   for part in path.split '.'
     xmlObject = xmlObject?[part]?[0]
 
@@ -62,12 +62,7 @@ class OutcomeService
   REQUEST_DELETE:   'deleteResult'
 
 
-  constructor: (service_url, source_did, provider, language = 'en') ->
-    @service_url  = service_url
-    @source_did   = source_did
-    @provider     = provider
-    @language     = language
-
+  constructor: (@service_url, @source_did, @provider, @language = 'en') ->
     # Break apart the service url into the url fragments for use by OAuth signing, additionally prepare the OAuth
     # specific url that used exclusively in the signing process.
     parts = @service_url_parts = url.parse @service_url
@@ -75,7 +70,7 @@ class OutcomeService
 
 
   send_replace_result: (score, callback) ->
-    doc = new OutcomeDocument @REQUEST_REPLACE, @source_did, @provider
+    doc = new OutcomeDocument @REQUEST_REPLACE, @source_did
 
     try
       doc.add_score score, @language
@@ -85,7 +80,7 @@ class OutcomeService
     
 
   send_read_result: (callback) ->
-    doc = new OutcomeDocument @REQUEST_READ, @source_did, @provider
+    doc = new OutcomeDocument @REQUEST_READ, @source_did
     @_send_request doc, (err, result, xml) =>
       return callback(err, result) if err
 
@@ -98,7 +93,7 @@ class OutcomeService
 
 
   send_delete_result: (callback) ->
-    doc = new OutcomeDocument @REQUEST_DELETE, @source_did, @provider
+    doc = new OutcomeDocument @REQUEST_DELETE, @source_did
     @_send_request doc, callback
 
 
@@ -164,4 +159,12 @@ class OutcomeService
 
 
 
-module.exports = OutcomeService
+exports.init = (provider) ->
+  if (provider.body.lis_outcome_service_url and provider.body.lis_result_sourcedid)
+    # The LTI 1.1 spec says that the language parameter is usually implied to be en, so the OutcomeService object
+    # defaults to en until the spec updates and says there's other possible format options.
+    provider.outcome_service = new OutcomeService provider.body.lis_outcome_service_url, provider.body.lis_result_sourcedid, provider
+  else
+    provider.outcome_service = false
+
+exports.OutcomeService = OutcomeService

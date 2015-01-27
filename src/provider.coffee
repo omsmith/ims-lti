@@ -1,6 +1,5 @@
 HMAC_SHA1         = require './hmac-sha1'
 MemoryNonceStore  = require './memory-nonce-store'
-OutcomeService    = require './outcome-service'
 errors            = require './errors'
 extensions        = require './extensions'
 
@@ -104,14 +103,6 @@ class Provider
     @ta = @has_role('TeachingAssistant')
 
     @launch_request = @body.lti_message_type is 'basic-lti-launch-request'
-
-    # Outcomes for the 1.1 gradebook extension
-    if (@body.lis_outcome_service_url and @body.lis_result_sourcedid)
-      # The LTI 1.1 spec says that the language parameter is usually implied to be en, so the OutcomeService object
-      # defaults to en until the spec updates and says there's other possible format options.
-      @outcome_service = new OutcomeService @body.lis_outcome_service_url, @body.lis_result_sourcedid, @
-    else
-      @outcome_service = false;
 
     # user
     @username = @body.lis_person_name_given or @body.lis_person_name_family or @body.lis_person_name_full or ''

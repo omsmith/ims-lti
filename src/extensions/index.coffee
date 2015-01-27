@@ -1,1 +1,2 @@
-exports.Content = require './content'
+exports.Content  = require './content'
+exports.Outcomes = require './outcomes'
