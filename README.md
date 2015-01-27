@@ -83,7 +83,7 @@ store           = new RedisNonceStore('consumer_key', client)
 provider = new lti.Provider consumer_key, consumer_secret, store
 ```
 
-### Outcomes
+### Outcomes Extension
 
 The outcomes feature is part of the LTI 1.1 specification and is new to ims-lti 1.0. All of the behind-the-scenes work necessary to get the ball rolling with it is already implemented for you, all you need to do is submit grades.
 
@@ -103,6 +103,37 @@ provider.valid_request req, (err, is_valid) ->
 
   provider.outcome_service.send_delete_result (err, result) ->
     console.log result # True or false
+```
+
+### Content Extension
+
+The content extension is an extension supported by most LMS platforms. It provides LTI providers a way to send content back to the LMS in the form of urls, images, files, oembeds, iframes, and even lti launch urls.
+
+```coffeescript
+provider = new lti.Provider consumer_key, consumer_secret
+
+provider.valid_request req, (err, is_valid) ->
+  #check if the request is valid and if the content extension is loaded.
+  if (!is_valid || !provider.ext_content) return false
+
+  provider.ext_content.has_return_type 'file' # Does the consumer support files
+  provider.ext_content.has_file_extension 'jpg' # Does the consumer support jpg
+
+  # All send requests take a response object as the first parameter. How the
+  # response object is manipulated can be overrided by replacing
+  # lti.Extensions.Content.redirector with your own function that accepts two
+  # parameters, the response object and the url to redirect to.
+  provider.ext_content.send_file res, file_url, text, content_mime_type
+
+  provider.ext_content.send_iframe res, iframe_url, title_attribute, width, height
+
+  provider.ext_content.send_image_url res, image_url, text, width, height
+
+  provider.ext_content.send_lti_launch_url res, launch_url, title_attribute, text
+
+  provider.ext_content.send_oembed res, oembed_url, endpoint
+
+  provider.ext_content.send_url res, hyperlink_url, text, title_attribute, target_attribute
 ```
 
 ## Running Tests
