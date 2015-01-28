@@ -94,6 +94,10 @@ provider.valid_request req, (err, is_valid) ->
   # Check if the request is valid and if the outcomes service exists.
   if (!is_valid || !provider.outcome_service) return false
 
+  # Check if the outcome service supports the result data extension using the
+  # text format. Available formats include text and url.
+  console.log provider.outcome_service.supports_result_data('text')
+
   # Replace accepts a value between 0 and 1.
   provider.outcome_service.send_replace_result .5, (err, result) ->
     console.log result # True or false
@@ -102,6 +106,12 @@ provider.valid_request req, (err, is_valid) ->
     console.log result # Value of the result already submitted from this embed
 
   provider.outcome_service.send_delete_result (err, result) ->
+    console.log result # True or false
+
+  provider.outcome_service.send_replace_result_with_text .5, 'Hello, world!', (err, result) ->
+    console.log result # True or false
+
+  provider.outcome_service.send_replace_result_with_url .5, 'https://google.com', (err, result) ->
     console.log result # True or false
 ```
 
