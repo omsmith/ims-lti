@@ -39,7 +39,7 @@ class OutcomeDocument
     @head.ele 'imsx_messageIdentifier', uuid.v1()
 
     # Apply the source DID to the body
-    @body.ele('sourceGUID').ele('sourcedId', source_did)
+    @body.ele('sourcedGUID').ele('sourcedId', source_did)
 
 
   add_score: (score, language) ->
