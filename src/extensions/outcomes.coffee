@@ -83,7 +83,7 @@ class OutcomeService
 
 
   constructor: (@provider, @language = 'en') ->
-    body = provider.body
+    body = @provider.body
 
     @service_url       = body.lis_outcome_service_url
     @source_did        = body.lis_result_sourcedid
