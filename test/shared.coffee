@@ -315,6 +315,12 @@ exports.outcomesWebServer = () =>
 
     res.end doc.end() + '\n'
 
+  verifyDoc = (doc) =>
+    doc.should.be.an.Object;
+    doc.should.have.property('sourcedGUID').with.lengthOf(1);
+    doc.sourcedGUID[0].should.be.an.Object;
+    doc.sourcedGUID[0].should.have.property('sourcedId').with.lengthOf(1);
+    doc.sourcedGUID[0].sourcedId[0].should.be.a.String
 
   outcomesHandler = (req, res) =>
     headers  = 'Content-Type': 'application/xml'
@@ -333,6 +339,8 @@ exports.outcomesWebServer = () =>
 
         switch result_type
           when 'replaceResultRequest'
+            verifyDoc result_body?.replaceResultRequest?[0].resultRecord[0]
+
             # As ugly as this may be this is one of the most effective XML parsers for node... yeah...
             score = parseFloat result_body?.replaceResultRequest?[0].resultRecord?[0].result?[0].resultScore?[0].textString?[0], 10
 
@@ -342,9 +350,13 @@ exports.outcomesWebServer = () =>
               return validScoreResponse res, null, score
 
           when 'readResultRequest'
+            verifyDoc result_body?.readResultRequest?[0].resultRecord[0]
+
             return validReadResponse res
 
           when 'deleteResultRequest'
+            verifyDoc result_body?.deleteResultRequest?[0].resultRecord[0]
+
             return validDeleteResponse res
 
           else
