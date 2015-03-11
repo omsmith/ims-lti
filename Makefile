@@ -12,7 +12,7 @@ ci: cover test-unit
 test-unit:
 	mkdir -p coverage && \
 	NODE_ENV=test multi=$(MULTI) \
-		./node_modules/mocha/bin/_mocha \
+		./node_modules/.bin/mocha \
 			--reporter mocha-multi \
 			$(MOCHA_OPTS)
 
