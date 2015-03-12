@@ -59,7 +59,11 @@ class HMAC_SHA1
 
     originalUrl = req.originalUrl or req.url
     protocol = req.protocol
-    
+
+    # Since canvas includes query parameters in the body we can omit the query string
+    if body.tool_consumer_info_product_family_code == 'canvas'
+      originalUrl = url.parse(originalUrl).pathname
+
     if protocol is undefined
       encrypted = req.connection.encrypted
       protocol = (encrypted and 'https') or 'http'

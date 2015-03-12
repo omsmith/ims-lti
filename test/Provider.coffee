@@ -161,6 +161,37 @@ describe 'LTI.Provider', () ->
         valid.should.equal true
         done()
 
+    it 'should special case and deduplicate Canvas requests', (done) =>
+      req =
+        url: '/test?test=x&test2=y&test2=z'
+        method: 'POST'
+        connection:
+          encrypted: undefined
+        headers:
+          host: 'localhost'
+        body:
+          lti_message_type: 'basic-lti-launch-request'
+          lti_version: 'LTI-1p0'
+          resource_link_id: 'http://link-to-resource.com/resource'
+          oauth_customer_key: 'key'
+          oauth_signature_method: 'HMAC-SHA1'
+          oauth_timestamp: Math.round(Date.now()/1000)
+          oauth_nonce: Date.now()+Math.random()*100
+          test: 'x'
+          test2: ['y', 'z']
+          tool_consumer_info_product_family_code: 'canvas'
+        query:
+          test: 'x'
+          test2: ['z', 'y']
+
+      signature = @provider.signer.build_signature(req, req.body, 'secret')
+      req.body.oauth_signature = signature
+
+      @provider.valid_request req, (err, valid) ->
+        should.not.exist err
+        valid.should.equal true
+        done()
+
     it 'should succeed with a hapi style req object', (done) =>
       timestamp = Math.round(Date.now() / 1000)
       nonce = Date.now() + Math.random() * 100
