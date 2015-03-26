@@ -91,7 +91,7 @@ class OutcomeService
 
     # Break apart the service url into the url fragments for use by OAuth signing, additionally prepare the OAuth
     # specific url that used exclusively in the signing process.
-    parts = @service_url_parts = url.parse @service_url
+    parts = @service_url_parts = url.parse @service_url, true
     @service_url_oauth = parts.protocol + '//' + parts.host + parts.pathname
 
 
