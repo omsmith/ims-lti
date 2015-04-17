@@ -9,6 +9,7 @@ xml2js       = require 'xml2js'
 xml_builder  = require 'xmlbuilder'
 
 errors       = require '../errors'
+HMAC_SHA1    = require '../hmac-sha1'
 utils        = require '../utils'
 
 
