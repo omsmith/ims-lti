@@ -88,6 +88,7 @@ class OutcomeService
     @source_did = options.source_did
     @result_data_types = options.result_data_types or []
     @signer = options.signer or (new HMAC_SHA1())
+    @cert_authority = options.cert_authority or null
     @language = options.language or 'en'
 
     # Break apart the service url into the url fragments for use by OAuth signing, additionally prepare the OAuth
@@ -157,10 +158,14 @@ class OutcomeService
 
     options =
       hostname:  @service_url_parts.hostname
-      agent:     if is_ssl then https.globalAgent else http.globalAgent
       path:      @service_url_parts.path
       method:    'POST'
       headers:   @_build_headers xml
+
+    if @cert_authority and is_ssl
+      options.ca = @cert_authority
+    else
+      options.agent = if is_ssl then https.globalAgent else http.globalAgent
 
     if @service_url_parts.port
       options.port = @service_url_parts.port
