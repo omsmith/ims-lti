@@ -81,13 +81,14 @@ class OutcomeService
   REQUEST_READ:     'readResult'
   REQUEST_DELETE:   'deleteResult'
 
-
-  constructor: (@provider, @language = 'en') ->
-    body = @provider.body
-
-    @service_url       = body.lis_outcome_service_url
-    @source_did        = body.lis_result_sourcedid
-    @result_data_types = body.ext_outcome_data_values_accepted and body.ext_outcome_data_values_accepted.split(',') or []
+  constructor: (options = {}) ->
+    @consumer_key = options.consumer_key
+    @consumer_secret = options.consumer_secret
+    @service_url = options.service_url
+    @source_did = options.source_did
+    @result_data_types = options.result_data_types or []
+    @signer = options.signer or (new HMAC_SHA1())
+    @language = options.language or 'en'
 
     # Break apart the service url into the url fragments for use by OAuth signing, additionally prepare the OAuth
     # specific url that used exclusively in the signing process.
@@ -125,7 +126,7 @@ class OutcomeService
       @_send_request doc, callback
     catch err
       callback err, false
-    
+
 
   send_read_result: (callback) ->
     doc = new OutcomeDocument @REQUEST_READ, @source_did, @
@@ -151,7 +152,7 @@ class OutcomeService
 
   _send_request: (doc, callback) ->
     xml     = doc.finalize()
-    body    = '' 
+    body    = ''
     is_ssl  = @service_url_parts.protocol == 'https:'
 
     options =
@@ -186,11 +187,11 @@ class OutcomeService
       oauth_version:           '1.0'
       oauth_nonce:             uuid.v4()
       oauth_timestamp:         Math.round Date.now() / 1000
-      oauth_consumer_key:      @provider.consumer_key
+      oauth_consumer_key:      @consumer_key
       oauth_body_hash:         crypto.createHash('sha1').update(body).digest('base64')
       oauth_signature_method:  'HMAC-SHA1'
 
-    headers.oauth_signature = @provider.signer.build_signature_raw @service_url_oauth, @service_url_parts, 'POST', headers, @provider.consumer_secret
+    headers.oauth_signature = @signer.build_signature_raw @service_url_oauth, @service_url_parts, 'POST', headers, @consumer_secret
 
     Authorization:     'OAuth realm="",' + ("#{key}=\"#{utils.special_encode(val)}\"" for key, val of headers).join ','
     'Content-Type':    'application/xml'
@@ -215,7 +216,15 @@ exports.init = (provider) ->
   if (provider.body.lis_outcome_service_url and provider.body.lis_result_sourcedid)
     # The LTI 1.1 spec says that the language parameter is usually implied to be en, so the OutcomeService object
     # defaults to en until the spec updates and says there's other possible format options.
-    provider.outcome_service = new OutcomeService provider
+    accepted_vals = provider.body.ext_outcome_data_values_accepted
+    provider.outcome_service = new OutcomeService(
+      consumer_key: provider.consumer_key
+      consumer_secret: provider.consumer_secret
+      service_url: provider.body.lis_outcome_service_url,
+      source_did: provider.body.lis_result_sourcedid,
+      result_data_types: accepted_vals and accepted_vals.split(',') or []
+      signer: provider.signer
+    )
   else
     provider.outcome_service = false
 
