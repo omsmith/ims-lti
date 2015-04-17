@@ -165,7 +165,7 @@ class OutcomeService
       options.port = @service_url_parts.port
 
     # Make the request to the TC, verifying that the status code is valid and fetching the entire response body.
-    req = http.request options, (res) =>
+    req = (if is_ssl then https else http).request options, (res) =>
       res.setEncoding 'utf8'
       res.on 'data', (chunk) => body += chunk
       res.on 'end', () =>
