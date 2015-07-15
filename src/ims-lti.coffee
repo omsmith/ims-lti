@@ -9,7 +9,7 @@ exports = module.exports =
   # Provider and Consumer classes
   Provider:        require './provider'
   Consumer:        require './consumer'
-  OutcomeService:  extensions.Outcomes.OutcomesService
+  OutcomeService:  extensions.Outcomes.OutcomeService
   Errors:          require './errors'
 
   Stores:
