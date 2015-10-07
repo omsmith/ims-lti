@@ -176,10 +176,7 @@ class OutcomeService
       res.setEncoding 'utf8'
       res.on 'data', (chunk) => body += chunk
       res.on 'end', () =>
-        if res.statusCode == 200
-          @_process_response body, callback
-        else
-          callback new errors.OutcomeResponseError('Incorrect authentication credentials'), false
+        @_process_response body, callback
 
     req.on 'error', (err) =>
       callback err, false
@@ -212,7 +209,8 @@ class OutcomeService
       code      = navigateXml response, 'imsx_POXHeader.imsx_POXResponseHeaderInfo.imsx_statusInfo.imsx_codeMajor'
 
       if code != 'success'
-        callback new errors.OutcomeResponseError('The request provided was invalid'), false
+        msg = navigateXml response, 'imsx_POXHeader.imsx_POXResponseHeaderInfo.imsx_statusInfo.imsx_description'
+        callback new errors.OutcomeResponseError(msg), false
       else
         callback null, true, response
 
