@@ -72,6 +72,19 @@ describe 'LTI.Extensions.Outcomes', () =>
         should.exist err
         result.should.equal false
       
+    it 'should return the error message from the response', (next) =>
+      provider = new lti.Provider 'key', 'wrong_secret'
+      provider.parse_request
+        body:
+          lis_outcome_service_url: "http://127.0.0.1:1337/service/url"
+          lis_result_sourcedid: "12"
+
+      provider.outcome_service.send_replace_result 0, (err, result) =>
+        should.exist err
+        err.message.should.equal 'The signature provided is not valid'
+        result.should.equal false
+        next()
+
 
   describe 'read', () =>
     it 'should be able to read a result given an id', (next) =>
