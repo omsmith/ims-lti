@@ -1,5 +1,6 @@
-lti       = require '../'
 should    = require 'should'
+
+lti       = require '../'
 
 
 describe 'LTI.Provider', () ->
@@ -44,8 +45,8 @@ describe 'LTI.Provider', () ->
 
 
     it 'should throw an error if no consumer_key or consumer_secret', () =>
-      (()=>provider = new @lti.Provider()).should.throw()
-      (()=>provider = new @lti.Provider('consumer-key')).should.throw()
+      (()=>provider = new @lti.Provider()).should.throw(lti.Errors.ConsumerError)
+      (()=>provider = new @lti.Provider('consumer-key')).should.throw(lti.Errors.ConsumerError)
 
 
   describe 'Structure', () =>
@@ -53,7 +54,7 @@ describe 'LTI.Provider', () ->
       @provider = new @lti.Provider('key','secret')
     it 'should have valid_request method', () =>
       should.exist @provider.valid_request
-      @provider.valid_request.should.be.a('function')
+      @provider.valid_request.should.be.a.Function
 
 
 
@@ -65,41 +66,51 @@ describe 'LTI.Provider', () ->
 
     it 'should return false if missing lti_message_type', (done) =>
       req_missing_type =
+        url: '/'
         body:
           lti_message_type: ''
           lti_version: 'LTI-1p0'
           resource_link_id: 'http://link-to-resource.com/resource'
       @provider.valid_request req_missing_type, (err, valid) ->
         err.should.not.equal null
+        err.should.be.instanceof(lti.Errors.ParameterError)
         valid.should.equal false
         done()
 
     it 'should return false if incorrect LTI version', (done) =>
       req_wrong_version =
+        url: '/'
         body:
           lti_message_type: 'basic-lti-launch-request'
           lti_version: 'LTI-0p0'
           resource_link_id: 'http://link-to-resource.com/resource'
       @provider.valid_request req_wrong_version, (err, valid) ->
         err.should.not.equal null
+        err.should.be.instanceof(lti.Errors.ParameterError)
         valid.should.equal false
         done()
 
 
     it 'should return false if no resource_link_id', (done) =>
       req_no_resource_link =
+        url: '/'
         body:
           lti_message_type: 'basic-lti-launch-request'
           lti_version: 'LTI-1p0'
       @provider.valid_request req_no_resource_link, (err, valid) ->
         err.should.not.equal null
+        err.should.be.instanceof(lti.Errors.ParameterError)
         valid.should.equal false
         done()
 
     it 'should return false if bad oauth', (done) =>
       req =
-        path: '/test'
-        route: {method: 'POST'}
+        url: '/test'
+        method: 'POST'
+        connection:
+          encrypted: undefined
+        headers:
+          host: 'localhost'
         body:
           lti_message_type: 'basic-lti-launch-request'
           lti_version: 'LTI-1p0'
@@ -108,7 +119,6 @@ describe 'LTI.Provider', () ->
           oauth_signature_method: 'HMAC-SHA1'
           oauth_timestamp: Math.round(Date.now()/1000)
           oauth_nonce: Date.now()+Math.random()*100
-        get: () -> 'test-get'
 
       #sign the fake request
       signature = @provider.signer.build_signature(req, 'secret')
@@ -119,6 +129,7 @@ describe 'LTI.Provider', () ->
 
       @provider.valid_request req, (err, valid) ->
         err.should.not.equal null
+        err.should.be.instanceof(lti.Errors.SignatureError)
         valid.should.equal false
         done()
 
@@ -126,8 +137,12 @@ describe 'LTI.Provider', () ->
 
     it 'should return true if good headers and oauth', (done) =>
       req =
-        path: '/test'
-        route: {method: 'POST'}
+        url: '/test'
+        method: 'POST'
+        connection:
+          encrypted: undefined
+        headers:
+          host: 'localhost'
         body:
           lti_message_type: 'basic-lti-launch-request'
           lti_version: 'LTI-1p0'
@@ -136,10 +151,9 @@ describe 'LTI.Provider', () ->
           oauth_signature_method: 'HMAC-SHA1'
           oauth_timestamp: Math.round(Date.now()/1000)
           oauth_nonce: Date.now()+Math.random()*100
-        get: () -> 'test-get'
 
       #sign the fake request
-      signature = @provider.signer.build_signature(req, 'secret')
+      signature = @provider.signer.build_signature(req, req.body, 'secret')
       req.body.oauth_signature = signature
 
       @provider.valid_request req, (err, valid) ->
@@ -147,11 +161,14 @@ describe 'LTI.Provider', () ->
         valid.should.equal true
         done()
 
-
-    it 'should return false if nonce already seen', (done) =>
+    it 'should special case and deduplicate Canvas requests', (done) =>
       req =
-        path: '/test'
-        route: {method: 'POST'}
+        url: '/test?test=x&test2=y&test2=z'
+        method: 'POST'
+        connection:
+          encrypted: undefined
+        headers:
+          host: 'localhost'
         body:
           lti_message_type: 'basic-lti-launch-request'
           lti_version: 'LTI-1p0'
@@ -160,10 +177,88 @@ describe 'LTI.Provider', () ->
           oauth_signature_method: 'HMAC-SHA1'
           oauth_timestamp: Math.round(Date.now()/1000)
           oauth_nonce: Date.now()+Math.random()*100
-        get: () -> 'test-gets'
+          test: 'x'
+          test2: ['y', 'z']
+          tool_consumer_info_product_family_code: 'canvas'
+        query:
+          test: 'x'
+          test2: ['z', 'y']
+
+      signature = @provider.signer.build_signature(req, req.body, 'secret')
+      req.body.oauth_signature = signature
+
+      @provider.valid_request req, (err, valid) ->
+        should.not.exist err
+        valid.should.equal true
+        done()
+
+    it 'should succeed with a hapi style req object', (done) =>
+      timestamp = Math.round(Date.now() / 1000)
+      nonce = Date.now() + Math.random() * 100
+
+      # Compute signature from express style req
+      expressReq =
+        url: '/test'
+        method: 'POST'
+        connection:
+          encrypted: undefined
+        headers:
+          host: 'localhost'
+        body:
+          lti_message_type: 'basic-lti-launch-request'
+          lti_version: 'LTI-1p0'
+          resource_link_id: 'http://link-to-resource.com/resource'
+          oauth_customer_key: 'key'
+          oauth_signature_method: 'HMAC-SHA1'
+          oauth_timestamp: timestamp
+          oauth_nonce: nonce
+
+      signature = @provider.signer.build_signature(expressReq, expressReq.body, 'secret')
+
+      hapiReq =
+        raw:
+          req:
+            url: '/test'
+            method: 'POST'
+            connection:
+              encrypted: undefined
+            headers:
+              host: 'localhost'
+        payload:
+          lti_message_type: 'basic-lti-launch-request'
+          lti_version: 'LTI-1p0'
+          resource_link_id: 'http://link-to-resource.com/resource'
+          oauth_customer_key: 'key'
+          oauth_signature_method: 'HMAC-SHA1'
+          oauth_timestamp: timestamp
+          oauth_nonce: nonce
+          oauth_signature: signature
+
+      @provider.valid_request hapiReq, (err, valid) ->
+        should.not.exist err
+        valid.should.equal true
+        done()
+
+
+    it 'should return false if nonce already seen', (done) =>
+      req =
+        url: '/test'
+        method: 'POST'
+        connection:
+          encrypted: undefined
+        headers:
+          host: 'localhost'
+        body:
+          lti_message_type: 'basic-lti-launch-request'
+          lti_version: 'LTI-1p0'
+          resource_link_id: 'http://link-to-resource.com/resource'
+          oauth_customer_key: 'key'
+          oauth_signature_method: 'HMAC-SHA1'
+          oauth_timestamp: Math.round(Date.now()/1000)
+          oauth_nonce: Date.now()+Math.random()*100
 
       #sign the fake request
-      signature = @provider.signer.build_signature(req, 'secret')
+      signature = @provider.signer.build_signature(req, req.body, 'secret')
       req.body.oauth_signature = signature
 
       @provider.valid_request req, (err, valid) =>
@@ -171,6 +266,7 @@ describe 'LTI.Provider', () ->
         valid.should.equal true
         @provider.valid_request req, (err, valid) ->
           should.exist err
+          err.should.be.instanceof(lti.Errors.NonceError)
           valid.should.equal false
           done()
 
@@ -182,8 +278,12 @@ describe 'LTI.Provider', () ->
       @provider = new @lti.Provider('key','secret')
 
       req =
-        path: '/test'
-        route: {method: 'POST'}
+        url: '/test'
+        method: 'POST'
+        connection:
+          encrypted: undefined
+        headers:
+          host: 'localhost'
         body:
           context_id: "4"
           context_label: "PHYS 2112"
@@ -211,11 +311,11 @@ describe 'LTI.Provider', () ->
           resource_link_id: "1"
           resource_link_title: "Fun LTI example!"
           roles: "Learner"
+          role_scope_mentor: "1234,5678,12%2C34"
           tool_consumer_info_product_family_code: "moodle"
           tool_consumer_info_version: "2013051400"
           tool_consumer_instance_guid: "localhost"
           user_id: "4"
-        get: () -> 'some-host'
 
       #sign the request
       req.body.oauth_signature = @provider.signer.build_signature(req, 'secret')
@@ -244,6 +344,7 @@ describe 'LTI.Provider', () ->
       @provider.body.should.have.property('resource_link_id')
       @provider.body.should.have.property('resource_link_title')
       @provider.body.should.have.property('roles')
+      @provider.body.should.have.property('role_scope_mentor')
       @provider.body.should.have.property('tool_consumer_info_product_family_code')
       @provider.body.should.have.property('tool_consumer_info_version')
       @provider.body.should.have.property('tool_consumer_instance_guid')
@@ -274,13 +375,16 @@ describe 'LTI.Provider', () ->
     it 'should have user id accessor', () =>
       @provider.userId.should.equal "4"
 
+    it 'should handle the role_scope_mentor id array', () =>
+      @provider.mentor_user_ids.should.eql ['1234', '5678', '12,34']
+
     it 'should have context accessors', () =>
       @provider.context_id.should.equal "4"
       @provider.context_label.should.equal "PHYS 2112"
       @provider.context_title.should.equal "Introduction To Physics"
 
-    it 'should have response outcome_service boolean', () =>
-      @provider.outcome_service.should.equal true
+    it 'should have response outcome_service object', () =>
+      @provider.outcome_service.should.exist
 
     it 'should account for the standardized urn prefix', () =>
       provider = new @lti.Provider('key', 'secret')
@@ -290,7 +394,29 @@ describe 'LTI.Provider', () ->
 
       provider.instructor.should.equal true
 
+    it 'should test for multiple roles being passed into the body', () =>
+      provider = new @lti.Provider('key', 'secret')
+      provider.parse_request
+        body:
+          roles: 'Instructor,Administrator'
 
+    it 'should handle different role types from the specification', () =>
+      provider = new @lti.Provider('key', 'secret')
+      provider.parse_request
+        body:
+          roles: 'urn:lti:role:ims/lis/Student,urn:lti:sysrole:ims/lis/Administrator,urn:lti:instrole:ims/lis/Alumni'
 
+      provider.student.should.equal true
+      provider.admin.should.equal true
+      provider.alumni.should.equal true
 
+    it 'should handle garbage roles that do not match the specification', () =>
+      provider = new @lti.Provider('key', 'secret')
+      provider.parse_request
+        body:
+          roles: 'urn:lti::ims/lis/Student,urn:lti:sysrole:ims/lis/Administrator/,/Alumni'
+
+      provider.student.should.equal false
+      provider.admin.should.equal false
+      provider.alumni.should.equal false
 

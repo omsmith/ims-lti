@@ -1,32 +1,51 @@
 {
   "name": "ims-lti",
-  "version": "0.1.0",
-  "description": "A test showing the possibility of pulling transcripts from Banner interface.",
+  "version": "3.0.1",
+  "description": "Module for building an LTI Tool Provider and accept LTI launch requests",
   "author": {
     "name": "James Rundquist",
     "email": "james@courseshark.com"
   },
+  "contributors": [
+    {
+      "name": "Owen Smith",
+      "email": "owen@omsmith.ca"
+    },
+    {
+      "name": "David Kosub",
+      "email": "dave@davidkosub.com"
+    }
+  ],
+  "license": "MIT",
+  "keywords": [
+    "ims",
+    "lti",
+    "provider"
+  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/OfficeHours/ims-lti.git"
+    "url": "https://github.com/omsmith/ims-lti.git"
+  },
+  "bugs": {
+    "url": "http://github.com/omsmith/ims-lti/issues"
+  },
+  "main": "./lib/ims-lti",
+  "scripts": {
+    "prepublish": "make build"
   },
   "dependencies": {
-    "coffee-script": "1.6.2"
+    "xml2js": "~0.4.0",
+    "xmlbuilder": "~2.4.0",
+    "node-uuid": "~1.4.0"
   },
   "devDependencies": {
-    "express": "3.0.5",
-    "mocha": "1.10.0",
-    "request": "2.21.0",
-    "redis": "0.8.3",
-    "should": "1.2.2"
-  },
-  "directories": {
-    "lib": "./lib/"
-  },
-  "main": "./lib/index"
-  ,
-  "bugs": {
-    "url": "http://github.com/OfficeHours/ims-lti/issues"
-  },
-  "readmeFilename": "README.md"
+    "coffee-coverage": "^0.4.4",
+    "coffee-script": "^1.8.0",
+    "coveralls": "^2.11.2",
+    "mocha": "^2.1.0",
+    "mocha-lcov-reporter": "0.0.1",
+    "mocha-multi": "^0.6.0",
+    "redis": "^0.12.1",
+    "should": "^4.6.1"
+  }
 }

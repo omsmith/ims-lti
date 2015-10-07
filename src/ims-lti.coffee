@@ -1,7 +1,4 @@
-fs          = require 'fs'
-https       = require 'https'
-urlUtil     = require 'url'
-querystring = require 'querystring'
+extensions = require './extensions'
 
 # Export the main object
 exports = module.exports =
@@ -10,13 +7,17 @@ exports = module.exports =
   version: '0.0.0'
 
   # Provider and Consumer classes
-  Provider: require './provider'
-  Consumer: require './consumer'
+  Provider:        require './provider'
+  Consumer:        require './consumer'
+  OutcomeService:  extensions.Outcomes.OutcomeService
+  Errors:          require './errors'
 
   Stores:
     RedisStore:   require './redis-nonce-store'
-    MemoryStore:  require './redis-nonce-store'
+    MemoryStore:  require './memory-nonce-store'
     NonceStore:   require './nonce-store'
+
+  Extensions: extensions
 
   # Which version of the LTI standard are accepted
   supported_versions: [

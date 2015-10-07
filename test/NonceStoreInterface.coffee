@@ -39,3 +39,4 @@ describe 'NonceStore [Interface Class]', () ->
         err.message.should.match /NOT/i
         valid.should.equal false
         done()
+

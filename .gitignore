@@ -11,6 +11,8 @@ pids
 logs
 results
 
-node_modules/*
+node_modules
+lib
+coverage
 
-npm-debug.log
+ims-lti*.tgz
