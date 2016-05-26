@@ -35,15 +35,15 @@ class Provider
     if not callback
       callback = body
       body = undefined
-    
+
     body = body or req.body or req.payload
     callback = callback or () ->
-    
+
     @parse_request(req, body)
-    
+
     if not @_valid_parameters(body)
       return callback(new errors.ParameterError('Invalid LTI parameters'), false)
-    
+
     @_valid_oauth req, body, callback
 
 
@@ -53,8 +53,10 @@ class Provider
   _valid_parameters: (body) ->
     if not body
       return false
-    
-    correct_message_type = body.lti_message_type is 'basic-lti-launch-request'
+
+    # This could possibly be a configurable parameter of Provider.
+    supported_message_types = ['basic-lti-launch-request', 'ContentItemSelectionRequest']
+    correct_message_type = body.lti_message_type in supported_message_types
     correct_version      = require('./ims-lti').supported_versions.indexOf(body.lti_version) isnt -1
     has_resource_link_id = body.resource_link_id?
     correct_message_type and correct_version and has_resource_link_id
@@ -80,7 +82,7 @@ class Provider
   # Does not return anything
   parse_request: (req, body) =>
     body = body or req.body or req.payload
-    
+
     for key, val of body
       continue if key.match(/^oauth_/)
       @body[key] = val

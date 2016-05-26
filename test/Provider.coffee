@@ -77,6 +77,7 @@ describe 'LTI.Provider', () ->
         valid.should.equal false
         done()
 
+
     it 'should return false if incorrect LTI version', (done) =>
       req_wrong_version =
         url: '/'
@@ -145,6 +146,32 @@ describe 'LTI.Provider', () ->
           host: 'localhost'
         body:
           lti_message_type: 'basic-lti-launch-request'
+          lti_version: 'LTI-1p0'
+          resource_link_id: 'http://link-to-resource.com/resource'
+          oauth_customer_key: 'key'
+          oauth_signature_method: 'HMAC-SHA1'
+          oauth_timestamp: Math.round(Date.now()/1000)
+          oauth_nonce: Date.now()+Math.random()*100
+
+      #sign the fake request
+      signature = @provider.signer.build_signature(req, req.body, 'secret')
+      req.body.oauth_signature = signature
+
+      @provider.valid_request req, (err, valid) ->
+        should.not.exist err
+        valid.should.equal true
+        done()
+
+    it 'should return true if lti_message_type is ContentItemSelectionRequest', (done) =>
+      req =
+        url: '/test'
+        method: 'POST'
+        connection:
+          encrypted: undefined
+        headers:
+          host: 'localhost'
+        body:
+          lti_message_type: 'ContentItemSelectionRequest'
           lti_version: 'LTI-1p0'
           resource_link_id: 'http://link-to-resource.com/resource'
           oauth_customer_key: 'key'
@@ -419,4 +446,3 @@ describe 'LTI.Provider', () ->
       provider.student.should.equal false
       provider.admin.should.equal false
       provider.alumni.should.equal false
-
