@@ -58,7 +58,7 @@ class HMAC_SHA1
       req = hapiRawReq
 
     originalUrl = req.originalUrl or req.url
-    protocol = req.protocol
+    protocol = req.headers['x-forwarded-proto'] || req.protocol
 
     # Since canvas includes query parameters in the body we can omit the query string
     if body.tool_consumer_info_product_family_code == 'canvas'
@@ -67,7 +67,7 @@ class HMAC_SHA1
     if protocol is undefined
       encrypted = req.connection.encrypted
       protocol = (encrypted and 'https') or 'http'
-    
+
     parsedUrl  = url.parse originalUrl, true
     hitUrl     = protocol + '://' + req.headers.host + parsedUrl.pathname
 
