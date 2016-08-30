@@ -173,7 +173,6 @@ describe 'LTI.Provider', () ->
         body:
           lti_message_type: 'ContentItemSelectionRequest'
           lti_version: 'LTI-1p0'
-          resource_link_id: 'http://link-to-resource.com/resource'
           oauth_customer_key: 'key'
           oauth_signature_method: 'HMAC-SHA1'
           oauth_timestamp: Math.round(Date.now()/1000)
@@ -186,6 +185,32 @@ describe 'LTI.Provider', () ->
       @provider.valid_request req, (err, valid) ->
         should.not.exist err
         valid.should.equal true
+        done()
+
+    it 'should return false if lti_message_type is ContentItemSelectionRequest and there is a resource_link_id', (done) =>
+      req =
+        url: '/test'
+        method: 'POST'
+        connection:
+          encrypted: undefined
+        headers:
+          host: 'localhost'
+        body:
+          lti_message_type: 'ContentItemSelectionRequest'
+          lti_version: 'LTI-1p0'
+          resource_link_id: 'http://link-to-resource.com/resource'
+          oauth_customer_key: 'key'
+          oauth_signature_method: 'HMAC-SHA1'
+          oauth_timestamp: Math.round(Date.now()/1000)
+          oauth_nonce: Date.now()+Math.random()*100
+
+      #sign the fake request
+      signature = @provider.signer.build_signature(req, req.body, 'secret')
+      req.body.oauth_signature = signature
+
+      @provider.valid_request req, (err, valid) ->
+        should.exist err
+        valid.should.equal false
         done()
 
     it 'should special case and deduplicate Canvas requests', (done) =>
