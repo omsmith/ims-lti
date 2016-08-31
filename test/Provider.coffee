@@ -161,7 +161,7 @@ describe 'LTI.Provider', () ->
         should.not.exist err
         valid.should.equal true
         done()
-
+    
     it 'should return true if lti_message_type is ContentItemSelectionRequest', (done) =>
       req =
         url: '/test'
@@ -187,31 +187,33 @@ describe 'LTI.Provider', () ->
         valid.should.equal true
         done()
 
-    it 'should return false if lti_message_type is ContentItemSelectionRequest and there is a resource_link_id', (done) =>
-      req =
-        url: '/test'
-        method: 'POST'
-        connection:
-          encrypted: undefined
-        headers:
-          host: 'localhost'
-        body:
-          lti_message_type: 'ContentItemSelectionRequest'
-          lti_version: 'LTI-1p0'
-          resource_link_id: 'http://link-to-resource.com/resource'
-          oauth_customer_key: 'key'
-          oauth_signature_method: 'HMAC-SHA1'
-          oauth_timestamp: Math.round(Date.now()/1000)
-          oauth_nonce: Date.now()+Math.random()*100
+    it "should return false if lti_message_type is ContentItemSelectionRequest and there are invalid fields", (done) =>
+      invalidFields = [ 'resource_link_id', 'resource_link_title','resource_link_description','launch_presentation_return_url', 'lis_result_sourcedid' ]
+      for invalidField in invalidFields
+        req =
+          url: '/test'
+          method: 'POST'
+          connection:
+            encrypted: undefined
+          headers:
+            host: 'localhost'
+          body:
+            lti_message_type: 'ContentItemSelectionRequest'
+            lti_version: 'LTI-1p0'
+            oauth_customer_key: 'key'
+            oauth_signature_method: 'HMAC-SHA1'
+            oauth_timestamp: Math.round(Date.now()/1000)
+            oauth_nonce: Date.now()+Math.random()*100
+        req.body[invalidField] = "Invalid Field"
 
-      #sign the fake request
-      signature = @provider.signer.build_signature(req, req.body, 'secret')
-      req.body.oauth_signature = signature
+        #sign the fake request
+        signature = @provider.signer.build_signature(req, req.body, 'secret')
+        req.body.oauth_signature = signature
 
-      @provider.valid_request req, (err, valid) ->
-        should.exist err
-        valid.should.equal false
-        done()
+        @provider.valid_request req, (err, valid) ->
+          should.exist err
+          valid.should.equal false
+      done()
 
     it 'should special case and deduplicate Canvas requests', (done) =>
       req =

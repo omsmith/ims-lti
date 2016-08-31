@@ -54,7 +54,6 @@ class Provider
     if not body
       return false
 
-    # This could possibly be a configurable parameter of Provider.
     correct_version      = require('./ims-lti').supported_versions.indexOf(body.lti_version) isnt -1
     has_resource_link_id = body.resource_link_id?
     omits_content_item_params = 
