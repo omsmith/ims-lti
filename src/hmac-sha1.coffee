@@ -61,7 +61,7 @@ class HMAC_SHA1
     protocol = req.protocol
 
     # Since canvas includes query parameters in the body we can omit the query string
-    if body.tool_consumer_info_product_family_code == 'canvas'
+    if body.tool_consumer_info_product_family_code == 'canvas' or body.tool_consumer_info_product_family_code == 'schoology'
       originalUrl = url.parse(originalUrl).pathname
 
     if protocol is undefined
