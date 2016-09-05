@@ -187,9 +187,14 @@ describe 'LTI.Provider', () ->
         valid.should.equal true
         done()
 
-    it "should return false if lti_message_type is ContentItemSelectionRequest and there are invalid fields", (done) =>
-      invalidFields = [ 'resource_link_id', 'resource_link_title','resource_link_description','launch_presentation_return_url', 'lis_result_sourcedid' ]
-      for invalidField in invalidFields
+    [
+      'resource_link_id',
+      'resource_link_title',
+      'resource_link_description',
+      'launch_presentation_return_url',
+      'lis_result_sourcedid'
+    ].forEach (invalidField) =>
+      it "should return false if lti_message_type is ContentItemSelectionRequest and there is a \"#{invalidField}\" field", (done) =>
         req =
           url: '/test'
           method: 'POST'
@@ -213,7 +218,7 @@ describe 'LTI.Provider', () ->
         @provider.valid_request req, (err, valid) ->
           should.exist err
           valid.should.equal false
-      done()
+          done()
 
     it 'should special case and deduplicate Canvas requests', (done) =>
       req =
