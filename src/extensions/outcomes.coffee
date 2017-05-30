@@ -60,6 +60,10 @@ class OutcomeDocument
     @_add_payload('url', url)
 
 
+  add_lti_launch_url: (url) ->
+    @_add_payload('ltiLaunchUrl', url)
+
+
   finalize: () ->
     @doc.end(pretty: true)
 
@@ -70,7 +74,6 @@ class OutcomeDocument
 
   _add_payload: (type, value) ->
     throw new errors.ExtensionError('Result data payload has already been set') if @has_payload
-    throw new errors.ExtensionError('Result data type is not supported') if !@outcome_service.supports_result_data(type)
     @_result_ele().ele('resultData').ele(type, value)
     @has_payload = true
 
@@ -233,3 +236,4 @@ exports.init = (provider) ->
     provider.outcome_service = false
 
 exports.OutcomeService = OutcomeService
+exports.OutcomeDocument = OutcomeDocument
