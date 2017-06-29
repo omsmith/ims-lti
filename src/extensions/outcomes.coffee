@@ -2,7 +2,7 @@ crypto       = require 'crypto'
 http         = require 'http'
 https        = require 'https'
 url          = require 'url'
-uuid         = require 'node-uuid'
+uuid         = require 'uuid'
 
 
 xml2js       = require 'xml2js'
