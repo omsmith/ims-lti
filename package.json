@@ -36,7 +36,7 @@
   "dependencies": {
     "xml2js": "~0.4.0",
     "xmlbuilder": "~2.4.0",
-    "node-uuid": "~1.4.0"
+    "uuid": "~3.1.0"
   },
   "devDependencies": {
     "coffee-coverage": "^0.4.4",
