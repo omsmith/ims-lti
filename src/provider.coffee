@@ -6,7 +6,7 @@ extensions        = require './extensions'
 
 
 class Provider
-  constructor: (consumer_key, consumer_secret, nonceStore, signature_method=(new HMAC_SHA1()) ) ->
+  constructor: (consumer_key, consumer_secret, optionsOrNonceStore, signature_method) ->
 
     if typeof consumer_key is 'undefined' or consumer_key is null
       throw new errors.ConsumerError 'Must specify consumer_key'
@@ -14,11 +14,15 @@ class Provider
     if typeof consumer_secret is 'undefined' or consumer_secret is null
       throw new errors.ConsumerError 'Must specify consumer_secret'
 
-    if not nonceStore
-      nonceStore = new MemoryNonceStore()
+    if optionsOrNonceStore and optionsOrNonceStore.isNonceStore?()
+      options = {}
+      nonceStore = optionsOrNonceStore
+    else
+      options = optionsOrNonceStore or {}
+      nonceStore = options.nonceStore or new MemoryNonceStore()
 
-    if not nonceStore.isNonceStore?()
-      throw new errors.ParameterError 'Fourth argument must be a nonceStore object'
+    if not signature_method
+      signature_method = options.signer or new HMAC_SHA1(options)
 
     @consumer_key     = consumer_key
     @consumer_secret  = consumer_secret
