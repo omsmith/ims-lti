@@ -12,6 +12,10 @@ errors       = require '../errors'
 HMAC_SHA1    = require '../hmac-sha1'
 utils        = require '../utils'
 
+REQUEST_REPLACE = 'replaceResult'
+REQUEST_READ    = 'readResult'
+REQUEST_DELETE  = 'deleteResult'
+
 
 navigateXml = (xmlObject, path) ->
   for part in path.split '.'
@@ -23,7 +27,32 @@ navigateXml = (xmlObject, path) ->
 
 class OutcomeDocument
 
-  constructor: (type, source_did, @outcome_service) ->
+  @replace: (source_did, payload, options) ->
+    doc = new OutcomeDocument REQUEST_REPLACE, source_did, options
+
+    if not payload?
+      return doc
+
+    doc.add_score(payload.score) if payload.score?
+    doc.add_text(payload.text) if payload.text?
+    doc.add_url(payload.url) if payload.url?
+
+    return doc
+
+
+  @read: (source_did, options) ->
+    doc = new OutcomeDocument REQUEST_READ, source_did, options
+
+
+  @delete: (source_did, options) ->
+    doc = new OutcomeDocument REQUEST_DELETE, source_did, options
+
+
+  constructor: (type, source_did, options) ->
+    # unlike OutcomeService, OutcomeDocument defaults to support any result type
+    @result_data_types = options?.result_data_types or true
+    @language = options?.language or 'en'
+
     # Build and configure the document
     xmldec =
       version:     '1.0'
@@ -43,18 +72,17 @@ class OutcomeDocument
     @body.ele('sourcedGUID').ele('sourcedId', source_did)
 
 
-  add_score: (score, language) ->
+  add_score: (score) ->
     if (typeof score != 'number' or score < 0 or score > 1.0)
       throw new errors.ParameterError 'Score must be a floating point number >= 0 and <= 1'
 
     eScore = @_result_ele().ele('resultScore')
-    eScore.ele('language', language)
+    eScore.ele('language', @language)
     eScore.ele('textString', score)
 
 
   add_text: (text) ->
     @_add_payload('text', text)
-
 
   add_url: (url) ->
     @_add_payload('url', url)
@@ -70,17 +98,32 @@ class OutcomeDocument
 
   _add_payload: (type, value) ->
     throw new errors.ExtensionError('Result data payload has already been set') if @has_payload
-    throw new errors.ExtensionError('Result data type is not supported') if !@outcome_service.supports_result_data(type)
+    throw new errors.ExtensionError('Result data type is not supported') if !@_supports_result_data(type)
     @_result_ele().ele('resultData').ele(type, value)
     @has_payload = true
+
+
+  _supports_result_data: (type) ->
+    if not @result_data_types || @result_data_types.length is 0
+      return false
+
+    if @result_data_types is true
+      return true
+
+    if not type?
+      # Shouldn't be false?
+      return true
+
+    return @result_data_types.indexOf(type) != -1
 
 
 
 class OutcomeService
 
-  REQUEST_REPLACE:  'replaceResult'
-  REQUEST_READ:     'readResult'
-  REQUEST_DELETE:   'deleteResult'
+  # deprecated
+  REQUEST_REPLACE: REQUEST_REPLACE
+  REQUEST_READ:    REQUEST_READ
+  REQUEST_DELETE:  REQUEST_DELETE
 
   constructor: (options = {}) ->
     @consumer_key = options.consumer_key
@@ -99,39 +142,27 @@ class OutcomeService
 
 
   send_replace_result: (score, callback) ->
-    doc = new OutcomeDocument @REQUEST_REPLACE, @source_did, @
-
-    try
-      doc.add_score score, @language
-      @_send_request doc, callback
-    catch err
-      callback err, false
+    @_send_replace_result {score: score}, callback
 
 
   send_replace_result_with_text: (score, text, callback) ->
-    doc = new OutcomeDocument @REQUEST_REPLACE, @source_did, @
-
-    try
-      doc.add_score score, @language,
-      doc.add_text text
-      @_send_request doc, callback
-    catch err
-      callback err, false
+    @_send_replace_result {score: score, text: text}, callback
 
 
   send_replace_result_with_url: (score, url, callback) ->
-    doc = new OutcomeDocument @REQUEST_REPLACE, @source_did, @
+    @_send_replace_result {score: score, url: url}, callback
 
+
+  _send_replace_result: (payload, callback) ->
     try
-      doc.add_score score, @language,
-      doc.add_url url
+      doc = OutcomeDocument.replace @source_did, payload, @
       @_send_request doc, callback
     catch err
       callback err, false
 
 
   send_read_result: (callback) ->
-    doc = new OutcomeDocument @REQUEST_READ, @source_did, @
+    doc = OutcomeDocument.read @source_did, @
     @_send_request doc, (err, result, xml) =>
       return callback(err, result) if err
 
@@ -144,11 +175,12 @@ class OutcomeService
 
 
   send_delete_result: (callback) ->
-    doc = new OutcomeDocument @REQUEST_DELETE, @source_did, @
+    doc = OutcomeDocument.delete @source_did, @
     @_send_request doc, callback
 
 
   supports_result_data: (type) ->
+    # deprecated
     return @result_data_types.length and (!type or @result_data_types.indexOf(type) != -1)
 
 
@@ -232,4 +264,5 @@ exports.init = (provider) ->
   else
     provider.outcome_service = false
 
+exports.OutcomeDocument = OutcomeDocument
 exports.OutcomeService = OutcomeService
