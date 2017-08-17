@@ -40,6 +40,9 @@ _clean_request_body = (body, query) ->
 
 class HMAC_SHA1
 
+  constructor: (options) ->
+    @trustProxy = (options and options.trustProxy) or false
+
   toString: () ->
     'HMAC_SHA1'
 
@@ -52,24 +55,37 @@ class HMAC_SHA1
 
     @sign_string sig.join('&'), consumer_secret, token
 
+  host: (req) ->
+    if not @trustProxy
+      return req.headers.host
+
+    req.headers['x-forwarded-host'] or req.headers.host
+
+  protocol: (req) ->
+    xprotocol = req.headers['x-forwarded-proto']
+    if @trustProxy and xprotocol
+      return xprotocol
+
+    if req.protocol
+      return req.protocol
+
+    if req.connection.encrypted then 'https' else 'http'
+
   build_signature: (req, body, consumer_secret, token) ->
     hapiRawReq = req.raw and req.raw.req
     if hapiRawReq
       req = hapiRawReq
 
     originalUrl = req.originalUrl or req.url
-    protocol = req.protocol
+    host = @host req
+    protocol = @protocol req
 
     # Since canvas includes query parameters in the body we can omit the query string
     if body.tool_consumer_info_product_family_code == 'canvas'
       originalUrl = url.parse(originalUrl).pathname
 
-    if protocol is undefined
-      encrypted = req.connection.encrypted
-      protocol = (encrypted and 'https') or 'http'
-    
     parsedUrl  = url.parse originalUrl, true
-    hitUrl     = protocol + '://' + req.headers.host + parsedUrl.pathname
+    hitUrl     = protocol + '://' + host + parsedUrl.pathname
 
     @build_signature_raw hitUrl, parsedUrl, req.method, body, consumer_secret, token
 

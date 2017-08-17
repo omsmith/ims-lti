@@ -38,8 +38,20 @@ Once you find the `oauth_consumer_secret` based on the `oauth_consumer_key` in t
 
 ```coffeescript
 lti = require 'ims-lti'
+hmac = require 'ims-lti/lib/hmac-sha1'
 
-provider = new lti.Provider consumer_key, consumer_secret, [nonce_store=MemoryStore], [signature_method=HMAC_SHA1]
+provider = new lti.Provider consumer_key, consumer_secret
+
+# To use x-forwarded-* headers
+provider = new lti.Provider consumer_key, consumer_secret, trustProxy: true
+
+# To provide the nonce store
+store = new lti.Stores.MemoryStore
+provider = new lti.Provider consumer_key, consumer_secret, nonceStore: store
+
+# To provide the signer
+sig = new hmac.HMAC_SHA1 trustProxy: false
+provider = new lti.Provider consumer_key, consumer_secret, signer: sig
 ```
 
 Once the provider has been initialized, a reqest object can be validated against it. During validation, OAuth signatures are checked against the passed consumer_secret and signautre_method ( HMAC_SHA1 assumed ). isValid returns true if the request is an lti request and is properly signed.

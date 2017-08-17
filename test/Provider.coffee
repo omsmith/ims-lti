@@ -21,7 +21,7 @@ describe 'LTI.Provider', () ->
       provider.consumer_key.should.equal consumer_key
       provider.consumer_secret.should.equal consumer_secret
       provider.signer.toString().should.equal sig.toString()
-
+      provider.signer.trustProxy.should.equal false
 
 
     it 'should accept (consumer_key, consumer_secret, nonceStore, sig)', () =>
@@ -42,6 +42,32 @@ describe 'LTI.Provider', () ->
 
       provider = new @lti.Provider('10204','secret-shhh',nonceStore)
       provider.nonceStore.should.equal nonceStore
+
+
+    it 'should accept (consumer_key, consumer_secret, nonceStore: store)', () =>
+      nonceStore =
+        isNonceStore: ()->true
+        isNew:   ()->return
+        setUsed: ()->return
+
+      provider = new @lti.Provider('10204','secret-shhh',nonceStore:nonceStore,trustProxy:true)
+      provider.nonceStore.should.equal nonceStore
+      provider.signer.trustProxy.should.equal true
+
+
+    it 'should accept (consumer_key, consumer_secret, signer: sig)', () =>
+      sig =
+        me: 3
+        you: 1
+        total: 4
+
+      provider = new @lti.Provider('10204','secret-shhh',signer:sig)
+      provider.signer.should.equal sig
+
+
+    it 'should accept (consumer_key, consumer_secret, trustProxy: true)', () =>
+      provider = new @lti.Provider('10204','secret-shhh',trustProxy:true)
+      provider.signer.trustProxy.should.equal true
 
 
     it 'should throw an error if no consumer_key or consumer_secret', () =>
