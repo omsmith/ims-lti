@@ -24,6 +24,22 @@ navigateXml = (xmlObject, path) ->
   return xmlObject
 
 
+parseResponse = (body, callback) ->
+  xml2js.parseString body, trim: true, (err, result) =>
+    if err?
+      callback new errors.OutcomeResponseError('The server responsed with an invalid XML document'), false
+      return
+
+    response  = result?.imsx_POXEnvelopeResponse
+    code      = navigateXml response, 'imsx_POXHeader.imsx_POXResponseHeaderInfo.imsx_statusInfo.imsx_codeMajor'
+
+    if code != 'success'
+      msg = navigateXml response, 'imsx_POXHeader.imsx_POXResponseHeaderInfo.imsx_statusInfo.imsx_description'
+      callback new errors.OutcomeResponseError(msg), false
+    else
+      callback null, true, response
+
+
 
 class OutcomeDocument
 
@@ -234,18 +250,8 @@ class OutcomeService
 
 
   _process_response: (body, callback) ->
-    xml2js.parseString body, trim: true, (err, result) =>
-      return callback new errors.OutcomeResponseError('The server responsed with an invalid XML document'), false if err
-
-      response  = result?.imsx_POXEnvelopeResponse
-      code      = navigateXml response, 'imsx_POXHeader.imsx_POXResponseHeaderInfo.imsx_statusInfo.imsx_codeMajor'
-
-      if code != 'success'
-        msg = navigateXml response, 'imsx_POXHeader.imsx_POXResponseHeaderInfo.imsx_statusInfo.imsx_description'
-        callback new errors.OutcomeResponseError(msg), false
-      else
-        callback null, true, response
-
+    # deprecated
+    parseResponse(body, callback)
 
 
 exports.init = (provider) ->
@@ -266,3 +272,4 @@ exports.init = (provider) ->
 
 exports.OutcomeDocument = OutcomeDocument
 exports.OutcomeService = OutcomeService
+exports.parseResponse = parseResponse
