@@ -59,7 +59,11 @@ class OutcomeDocument
   add_url: (url) ->
     @_add_payload('url', url)
 
+	
+  add_lti_url: (url) ->
+    @_add_payload('url', url, 'ltiLaunchUrl')
 
+	
   finalize: () ->
     @doc.end(pretty: true)
 
@@ -68,10 +72,11 @@ class OutcomeDocument
     @result or (@result = @body.ele('result'))
 
 
-  _add_payload: (type, value) ->
+  _add_payload: (type, value, resultDataKeyName) ->
+	keyname = resultDataKeyName or type
     throw new errors.ExtensionError('Result data payload has already been set') if @has_payload
     throw new errors.ExtensionError('Result data type is not supported') if !@outcome_service.supports_result_data(type)
-    @_result_ele().ele('resultData').ele(type, value)
+    @_result_ele().ele('resultData').ele(keyname, value)
     @has_payload = true
 
 
@@ -125,6 +130,17 @@ class OutcomeService
     try
       doc.add_score score, @language,
       doc.add_url url
+      @_send_request doc, callback
+    catch err
+      callback err, false
+	  
+	  
+  send_replace_result_with_lti_url: (score, url, callback) ->
+    doc = new OutcomeDocument @REQUEST_REPLACE, @source_did, @
+
+    try
+      doc.add_score score, @language,
+      doc.add_lti_url url
       @_send_request doc, callback
     catch err
       callback err, false
