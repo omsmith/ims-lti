@@ -6,4 +6,4 @@ node_js:
   - 6
 services:
   - redis-server
-after_success: 'make report-cov'
+after_success: npm run-script coverage
