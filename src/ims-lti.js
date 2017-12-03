@@ -1,10 +1,10 @@
 const extensions = require('./extensions');
 
 // Export the main object
-const exports = (module.exports = {
+module.exports = {
 
   // Version of the library this is
-  version: '0.0.0',
+  version: require('../package.json').version,
 
   // Provider and Consumer classes
   Provider:        require('./provider'),
@@ -24,4 +24,4 @@ const exports = (module.exports = {
   supported_versions: [
     'LTI-1p0'
   ]
-});
+};

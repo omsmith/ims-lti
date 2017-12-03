@@ -6,4 +6,4 @@ class Consumer {
 }
 
 
-const exports = (module.exports = Consumer);
+module.exports = Consumer;

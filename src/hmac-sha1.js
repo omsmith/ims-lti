@@ -82,7 +82,7 @@ class HMAC_SHA1 {
       const { encrypted } = req.connection;
       protocol = (encrypted && 'https') || 'http';
     }
-    
+
     const parsedUrl  = url.parse(originalUrl, true);
     const hitUrl     = protocol + '://' + req.headers.host + parsedUrl.pathname;
 
@@ -97,4 +97,4 @@ class HMAC_SHA1 {
   }
 }
 
-const exports = (module.exports = HMAC_SHA1);
+module.exports = HMAC_SHA1;

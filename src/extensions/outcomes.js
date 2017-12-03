@@ -12,7 +12,7 @@ const crypto       = require('crypto');
 const http         = require('http');
 const https        = require('https');
 const url          = require('url');
-const uuid         = require('node-uuid');
+const uuid         = require('uuid');
 
 
 const xml2js       = require('xml2js');
@@ -101,7 +101,7 @@ class OutcomeDocument {
 
 class OutcomeService {
   static initClass() {
-  
+
     this.prototype.REQUEST_REPLACE =  'replaceResult';
     this.prototype.REQUEST_READ =     'readResult';
     this.prototype.REQUEST_DELETE =   'deleteResult';

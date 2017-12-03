@@ -1,10 +1,9 @@
 sudo: false
 language: node_js
 node_js:
-  - iojs
-  - "0.12"
-  - "0.10"
+  - node # latest
+  - 8
+  - 6
 services:
   - redis-server
-script: 'make ci'
 after_success: 'make report-cov'

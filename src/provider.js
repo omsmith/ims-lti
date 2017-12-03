@@ -76,10 +76,10 @@ class Provider {
 
     const correct_version      = require('./ims-lti').supported_versions.indexOf(body.lti_version) !== -1;
     const has_resource_link_id = (body.resource_link_id != null);
-    const omits_content_item_params = 
+    const omits_content_item_params =
       (body.resource_link_id == null) &&
-      (body.resource_link_title == null) && 
-      (body.resource_link_description == null) && 
+      (body.resource_link_title == null) &&
+      (body.resource_link_description == null) &&
       (body.launch_presentation_return_url == null) &&
       (body.lis_result_sourcedid == null);
     return (correct_version &&
@@ -173,4 +173,4 @@ class Provider {
 
 
 
-const exports = (module.exports = Provider);
+module.exports = Provider;

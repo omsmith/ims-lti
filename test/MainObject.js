@@ -20,7 +20,7 @@ describe('LTI', function() {
 
     return it('should be an instance of Provider', () => {
       this.lti.Provider.should.be.an.instanceOf(Object);
-      return this.lti.Provider.should.equal(require(('../lib/provider')));
+      return this.lti.Provider.should.equal(require(('../src/provider')));
     });
   });
 
@@ -32,7 +32,7 @@ describe('LTI', function() {
 
     return it('should be an instance of Consumer', () => {
       this.lti.Consumer.should.be.an.instanceOf(Object);
-      return this.lti.Consumer.should.equal(require(('../lib/consumer')));
+      return this.lti.Consumer.should.equal(require(('../src/consumer')));
     });
   });
 
@@ -45,4 +45,3 @@ describe('LTI', function() {
     });
   });
 });
-

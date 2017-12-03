@@ -76,7 +76,7 @@ The default nonce store (if none is specified) is the Memory Nonce Store. This s
 A superior nonce store is the RedisNonceStore. This store requires a secondary input into the constructor, a redis-client. The redis client is used to store the nonce keys and set them to expire within a set amount of time (default 5 minutes). A RedisNonceStore is initialized like:
 
 ```coffeescript
-RedisNonceStore = require '../lib/redis-nonce-store'
+RedisNonceStore = require '../src/redis-nonce-store'
 client          = require('redis').createClient()
 store           = new RedisNonceStore('consumer_key', client)
 

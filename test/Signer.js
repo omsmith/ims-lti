@@ -5,7 +5,7 @@
  */
 const should = require('should');
 
-const HMAC_SHA1 = require('../lib/hmac-sha1');
+const HMAC_SHA1 = require('../src/hmac-sha1');
 
 
 
@@ -46,4 +46,3 @@ describe('Signer', () =>
     return done();
   })
 );
-

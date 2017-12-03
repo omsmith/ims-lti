@@ -6,7 +6,7 @@
 const redis             = require('redis');
 const should            = require('should');
 
-const RedisNonceStore   = require('../lib/redis-nonce-store');
+const RedisNonceStore   = require('../src/redis-nonce-store');
 const shared            = require('./shared');
 
 describe('RedisNonceStore', function() {
@@ -29,4 +29,3 @@ describe('RedisNonceStore', function() {
     return store.redis.should.equal(redisClient);
   });
 });
-

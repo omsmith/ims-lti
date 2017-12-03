@@ -17,7 +17,7 @@ describe('LTI.Provider', function() {
   describe('Initialization', () => {
     it('should accept (consumer_key, consumer_secret)', () => {
 
-      const sig = new (require('../lib/hmac-sha1'));
+      const sig = new (require('../src/hmac-sha1'));
       const consumer_key = '10204';
       const consumer_secret = 'secret-shhh';
 
@@ -204,7 +204,7 @@ describe('LTI.Provider', function() {
         return done();
       });
     });
-    
+
     it('should return true if lti_message_type is ContentItemSelectionRequest', done => {
       const req = {
         url: '/test',

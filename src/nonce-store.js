@@ -23,4 +23,4 @@ class NonceStore {
 }
 
 
-const exports = (module.exports = NonceStore);
+module.exports = NonceStore;

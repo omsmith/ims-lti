@@ -3,7 +3,7 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const NonceStore  = require('../lib/nonce-store');
+const NonceStore  = require('../src/nonce-store');
 const should            = require('should');
 
 
@@ -56,4 +56,3 @@ describe('NonceStore [Interface Class]', function() {
     });
   });
 });
-

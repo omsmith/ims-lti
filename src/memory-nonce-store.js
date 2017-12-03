@@ -13,13 +13,7 @@ const EXPIRE_IN_SEC = 5 * 60;
 class MemoryNonceStore extends NonceStore {
 
   constructor() {
-    {
-      // Hack: trick Babel/TypeScript into allowing this before super.
-      if (false) { super(); }
-      let thisFn = (() => { this; }).toString();
-      let thisName = thisFn.slice(thisFn.indexOf('{') + 1, thisFn.indexOf(';')).trim();
-      eval(`${thisName} = this;`);
-    }
+    super();
     this.used = Object.create(null);
   }
 
@@ -74,4 +68,4 @@ class MemoryNonceStore extends NonceStore {
 }
 
 
-const exports = (module.exports = MemoryNonceStore);
+module.exports = MemoryNonceStore;

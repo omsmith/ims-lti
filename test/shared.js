@@ -10,7 +10,7 @@
 const crypto       = require('crypto');
 const http         = require('http');
 const url          = require('url');
-const uuid         = require('node-uuid');
+const uuid         = require('uuid');
 const should       = require('should');
 
 const xml2js       = require('xml2js');
