@@ -4,7 +4,7 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const url = require('url');
-
+const should = require('should');
 const lti = require('../');
 
 describe('LTI.Extensions.Content', function() {
@@ -84,7 +84,7 @@ describe('LTI.Extensions.Content', function() {
       ret_url.query.return_type.should.equal('file');
       ret_url.query.url.should.equal('http://example.com/myfile.txt');
       ret_url.query.text.should.equal('myfile.txt');
-      return ret_url.query.should.not.have.property('content_type');
+      return should(ret_url.query).not.have.property('content_type');
     });
 
     return it('should generate a query string for the optional parameters', function() {
@@ -110,9 +110,9 @@ describe('LTI.Extensions.Content', function() {
       this.res.status.should.equal(303);
       ret_url.query.return_type.should.equal('iframe');
       ret_url.query.url.should.equal('http://example.com/myfile.txt');
-      ret_url.query.should.not.have.property('title');
-      ret_url.query.should.not.have.property('width');
-      return ret_url.query.should.not.have.property('height');
+      should(ret_url.query).not.have.property('title');
+      should(ret_url.query).not.have.property('width');
+      return should(ret_url.query).not.have.property('height');
     });
 
     return it('should generate a query string for the optional parameters', function() {
@@ -139,9 +139,9 @@ describe('LTI.Extensions.Content', function() {
       this.res.status.should.equal(303);
       ret_url.query.return_type.should.equal('image_url');
       ret_url.query.url.should.equal('http://example.com/myfile.jpg');
-      ret_url.query.should.not.have.property('text');
-      ret_url.query.should.not.have.property('width');
-      return ret_url.query.should.not.have.property('height');
+      should(ret_url.query).not.have.property('text');
+      should(ret_url.query).not.have.property('width');
+      return should(ret_url.query).not.have.property('height');
     });
 
     return it('should generate a query string for the optional parameters', function() {
@@ -168,8 +168,8 @@ describe('LTI.Extensions.Content', function() {
       this.res.status.should.equal(303);
       ret_url.query.return_type.should.equal('lti_launch_url');
       ret_url.query.url.should.equal('http://example.com/test');
-      ret_url.query.should.not.have.property('title');
-      return ret_url.query.should.not.have.property('text');
+      should(ret_url.query).not.have.property('title');
+      return should(ret_url.query).not.have.property('text');
     });
 
     return it('should generate a query string for the optional parameters', function() {
@@ -195,7 +195,7 @@ describe('LTI.Extensions.Content', function() {
       this.res.status.should.equal(303);
       ret_url.query.return_type.should.equal('oembed');
       ret_url.query.url.should.equal('http://example.com/test');
-      return ret_url.query.should.not.have.property('endpoint');
+      return should(ret_url.query).not.have.property('endpoint');
     });
 
     return it('should generate a query string for the optional parameters', function() {
@@ -220,9 +220,9 @@ describe('LTI.Extensions.Content', function() {
       this.res.status.should.equal(303);
       ret_url.query.return_type.should.equal('url');
       ret_url.query.url.should.equal('http://example.com/test');
-      ret_url.query.should.not.have.property('text');
-      ret_url.query.should.not.have.property('title');
-      return ret_url.query.should.not.have.property('target');
+      should(ret_url.query).not.have.property('text');
+      should(ret_url.query).not.have.property('title');
+      return should(ret_url.query).not.have.property('target');
     });
 
     return it('should generate a query string for the optional parameters', function() {
