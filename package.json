@@ -33,7 +33,7 @@
   "scripts": {
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "lint": "eslint .",
-    "test": "nyc mocha"
+    "test": "nyc mocha --exit"
   },
   "dependencies": {
     "xml2js": "~0.4.0",
