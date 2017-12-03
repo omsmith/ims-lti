@@ -1,22 +1,30 @@
-should = require 'should'
+/*
+ * decaffeinate suggestions:
+ * DS102: Remove unnecessary code created because of implicit returns
+ * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
+ */
+const should = require('should');
 
-HMAC_SHA1 = require '../lib/hmac-sha1'
+const HMAC_SHA1 = require('../lib/hmac-sha1');
 
 
 
-signer = new HMAC_SHA1
+const signer = new HMAC_SHA1;
 
-describe 'Signer', () ->
+describe('Signer', () =>
 
-  it 'should include query params', (done) ->
-    req =
-      url: '/developers/LTI/test/v1p1/tool.php?foo=123&foo=bar'
-      method: 'POST'
-      connection:
+  it('should include query params', function(done) {
+    const req = {
+      url: '/developers/LTI/test/v1p1/tool.php?foo=123&foo=bar',
+      method: 'POST',
+      connection: {
         encrypted: undefined
-      headers:
+      },
+      headers: {
         host: 'www.imsglobal.org'
-    body =
+      }
+    };
+    const body = {
       resource_link_id: 'rsc1',
       oauth_callback: 'about:blank',
       lis_outcome_service_url: 'http://www.imsglobal.org/developers/LTI/test/v1p1/common/tool_consumer_outcome.php?b64=MTIzNDU6OjpzZWNyZXQ=',
@@ -30,9 +38,12 @@ describe 'Signer', () ->
       oauth_consumer_key: '12345',
       oauth_signature_method: 'HMAC-SHA1',
       oauth_signature: 'dHORwwJqwh5hQQAlvaA9csSIOhc='
+    };
 
-    signature = signer.build_signature req, body, 'secret'
-    signature.should.equal body.oauth_signature
+    const signature = signer.build_signature(req, body, 'secret');
+    signature.should.equal(body.oauth_signature);
 
-    done()
+    return done();
+  })
+);
 
