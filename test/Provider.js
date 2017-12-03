@@ -56,10 +56,8 @@ describe('LTI.Provider', function() {
 
 
     return it('should throw an error if no consumer_key or consumer_secret', () => {
-      (()=> { let provider;
-      return provider = new this.lti.Provider(); }).should.throw(lti.Errors.ConsumerError);
-      return (()=> { let provider;
-      return provider = new this.lti.Provider('consumer-key'); }).should.throw(lti.Errors.ConsumerError);
+      (()=> new this.lti.Provider()).should.throw(lti.Errors.ConsumerError);
+      (()=> new this.lti.Provider('consumer-key')).should.throw(lti.Errors.ConsumerError);
     });
   });
 
@@ -243,7 +241,7 @@ describe('LTI.Provider', function() {
       'launch_presentation_return_url',
       'lis_result_sourcedid'
     ].forEach(invalidField => {
-      return it(`should return false if lti_message_type is ContentItemSelectionRequest and there is a \"${invalidField}\" field`, done => {
+      return it(`should return false if lti_message_type is ContentItemSelectionRequest and there is a "${invalidField}" field`, done => {
         const req = {
           url: '/test',
           method: 'POST',

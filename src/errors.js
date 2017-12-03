@@ -11,15 +11,8 @@ class ConsumerError extends Error {
 }
 class ExtensionError extends Error {
   constructor(message) {
-    {
-      // Hack: trick Babel/TypeScript into allowing this before super.
-      if (false) { super(); }
-      let thisFn = (() => { this; }).toString();
-      let thisName = thisFn.slice(thisFn.indexOf('{') + 1, thisFn.indexOf(';')).trim();
-      eval(`${thisName} = this;`);
-    }
-    this.message = message;
     super(...arguments);
+    this.message = message;
   }
 }
 class StoreError extends Error {

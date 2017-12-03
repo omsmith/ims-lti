@@ -32,7 +32,7 @@ class MemoryNonceStore extends NonceStore {
       return next(new Error('Nonce already seen'), false);
     }
 
-    return this.setUsed(nonce, timestamp, function(err) {
+    return this.setUsed(nonce, timestamp, function() {
       if ((typeof timestamp !== 'undefined') && (timestamp !== null)) {
         timestamp = parseInt(timestamp, 10);
         const currentTime = Math.round(Date.now() / 1000);

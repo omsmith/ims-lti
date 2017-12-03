@@ -4,8 +4,6 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const redis             = require('redis');
-const should            = require('should');
-
 const RedisNonceStore   = require('../src/redis-nonce-store');
 const shared            = require('./shared');
 

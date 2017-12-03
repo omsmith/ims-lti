@@ -4,7 +4,6 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
 const MemoryNonceStore  = require('../src/memory-nonce-store');
-const should            = require('should');
 const shared            = require('./shared');
 
 

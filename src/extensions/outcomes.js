@@ -247,7 +247,7 @@ class OutcomeService {
         const result = [];
         for (let key in headers) {
           const val = headers[key];
-          result.push(`${key}=\"${utils.special_encode(val)}\"`);
+          result.push(`${key}="${utils.special_encode(val)}"`);
         }
         return result;
       })()).join(','),

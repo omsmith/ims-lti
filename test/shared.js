@@ -384,7 +384,6 @@ exports.outcomesWebServer = () => {
   };
 
   const outcomesHandler = (req, res) => {
-    const headers  = {'Content-Type': 'application/xml'};
     let body     = '';
 
     req.on('data', buffer => {

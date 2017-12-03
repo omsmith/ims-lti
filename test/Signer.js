@@ -3,11 +3,7 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/master/docs/suggestions.md
  */
-const should = require('should');
-
 const HMAC_SHA1 = require('../src/hmac-sha1');
-
-
 
 const signer = new HMAC_SHA1;
 

@@ -31,8 +31,9 @@
   },
   "main": "./src/ims-lti",
   "scripts": {
-    "test": "nyc mocha",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
+    "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "lint": "eslint .",
+    "test": "nyc mocha"
   },
   "dependencies": {
     "xml2js": "~0.4.0",
@@ -41,9 +42,18 @@
   },
   "devDependencies": {
     "coveralls": "^2.12.0",
+    "eslint": "^4.12.1",
     "mocha": "^4.0.1",
     "nyc": "^11.3.0",
     "redis": "^2.8.0",
     "should": "^13.1.3"
+  },
+  "eslintConfig": {
+    "extends": "eslint:recommended",
+    "env": {
+      "es6": true,
+      "mocha": true,
+      "node": true
+    }
   }
 }
