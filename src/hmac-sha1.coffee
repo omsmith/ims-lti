@@ -68,6 +68,10 @@ class HMAC_SHA1
       encrypted = req.connection.encrypted
       protocol = (encrypted and 'https') or 'http'
     
+    # alpha support for x-forwarded-proto
+    if req.get('x-forwarded-proto') == 'https' 
+      protocol = 'https'
+      
     parsedUrl  = url.parse originalUrl, true
     hitUrl     = protocol + '://' + req.headers.host + parsedUrl.pathname
 
