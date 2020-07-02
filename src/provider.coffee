@@ -56,15 +56,19 @@ class Provider
 
     correct_version      = require('./ims-lti').supported_versions.indexOf(body.lti_version) isnt -1
     has_resource_link_id = body.resource_link_id?
+    omits_presentation_lis_params = 
+      not body.launch_presentation_return_url? and
+      not body.lis_result_sourcedid?
+    
     omits_content_item_params = 
       not body.resource_link_id? and
       not body.resource_link_title? and 
-      not body.resource_link_description? and 
-      not body.launch_presentation_return_url? and
-      not body.lis_result_sourcedid?
+      not body.resource_link_description?
+    
     correct_version and
       ( body.lti_message_type is 'basic-lti-launch-request' and has_resource_link_id ) or
-      ( body.lti_message_type is 'ContentItemSelectionRequest' and omits_content_item_params )
+      ( body.lti_message_type is 'ContentItemSelectionRequest' and omits_content_item_params and omits_presentation_lis_params ) or
+      ( body.lti_message_type is 'ContentItemUpdateRequest' and omits_presentation_lis_params)
 
   # Helper to validate the OAuth information in the request
   #
