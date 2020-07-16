@@ -44,8 +44,8 @@ class OutcomeDocument
 
 
   add_score: (score, language) ->
-    if (typeof score != 'number' or score < 0 or score > 1.0)
-      throw new errors.ParameterError 'Score must be a floating point number >= 0 and <= 1'
+    if (typeof score != 'number')
+      throw new errors.ParameterError 'Score must be a floating point number'
 
     eScore = @_result_ele().ele('resultScore')
     eScore.ele('language', language)
