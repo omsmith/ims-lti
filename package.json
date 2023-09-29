@@ -34,9 +34,9 @@
     "prepublish": "make build"
   },
   "dependencies": {
-    "xml2js": "~0.4.0",
-    "xmlbuilder": "~2.4.0",
-    "node-uuid": "~1.4.0"
+    "node-uuid": "~1.4.0",
+    "xml2js": "^0.6.2",
+    "xmlbuilder": "~2.4.0"
   },
   "devDependencies": {
     "coffee-coverage": "^0.4.4",
